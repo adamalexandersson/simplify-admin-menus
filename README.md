@@ -132,3 +132,6 @@ Created by Adam Alexandersson
 ### 1.2.1
 - Minor changes and improvements
 - Translations updates
+
+### 1.2.2
+- Improved security and code quality for WordPress plugin repository

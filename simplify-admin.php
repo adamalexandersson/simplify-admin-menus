@@ -3,7 +3,7 @@
  * Plugin Name: Simplify Admin
  * Plugin URI: 
  * Description: WordPress plugin that simplifies the admin panel menus and admin bar based on user roles.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Adam Alexandersson
  * Author URI: 
  * License: GPL v3 or later

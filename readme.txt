@@ -3,7 +3,7 @@ Contributors: adamalexandersson
 Tags: admin, adminbar, simplify, clean, hide
 Requires at least: 5.0
 Tested up to: 6.7.2
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -45,6 +45,9 @@ No, this plugin only modifies the admin interface and admin bar. It does not aff
 3. Admin bar customization options
 
 == Changelog ==
+
+= 1.2.2 =
+* Improved security and code quality for WordPress plugin repository
 
 = 1.2.1 =
 * Minor changes and improvements
