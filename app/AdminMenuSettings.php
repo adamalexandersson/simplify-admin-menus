@@ -5,7 +5,7 @@ namespace SimplifyAdmin;
 use function add_action;
 use function get_option;
 use function sanitize_title;
-use function strip_tags;
+use function wp_strip_all_tags;
 use function wp_get_current_user;
 
 /**
@@ -67,7 +67,7 @@ class AdminMenuSettings
             $menuId = sanitize_title($menuItem[2]);
             $items[] = [
                 'id' => $menuId,
-                'title' => $menuItem[0],
+                'title' => wp_strip_all_tags($menuItem[0]),
                 'submenu' => isset($this->originalSubmenu[$menuItem[2]]) ? 
                     $this->getSubmenuItems($this->originalSubmenu[$menuItem[2]], $menuId) : []
             ];
@@ -96,7 +96,7 @@ class AdminMenuSettings
 
             $items[] = [
                 'id' => $parentId . '-' . sanitize_title($submenuItem[2]),
-                'title' => strip_tags($submenuItem[0])
+                'title' => wp_strip_all_tags($submenuItem[0])
             ];
         }
         return $items;

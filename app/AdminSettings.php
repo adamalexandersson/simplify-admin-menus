@@ -30,6 +30,8 @@ use function wp_add_inline_style;
 use function get_user_option;
 use function __;
 use function translate_user_role;
+use function wp_unslash;
+use function is_array;
 
 /**
  * Admin Settings Class
@@ -154,10 +156,38 @@ class AdminSettings
         wp_add_inline_style('wp-admin', $css_vars);
     }
 
+    public function sanitizeMenuSettings($input)
+    {
+        if (!is_array($input)) {
+            return [];
+        }
+
+        $sanitized = array_map(function ($item) {
+            return sanitize_text_field($item);
+        }, $input);
+
+        return $sanitized;
+    }
+
     public function registerSettings(): void
     {
-        register_setting('simplify-admin', 'sa_menu_settings');
-        register_setting('simplify-admin', 'sa_adminbar_settings');
+        register_setting(
+            'simplify-admin',
+            'sa_menu_settings',
+            [
+                'sanitize_callback' => [$this, 'sanitizeMenuSettings'], 
+                'default' => []
+            ]
+        );
+        
+        register_setting(
+            'simplify-admin',
+            'sa_adminbar_settings',
+            [
+                'sanitize_callback' => [$this, 'sanitizeMenuSettings'],
+                'default' => []
+            ]
+        );
     }
 
     public function ajaxLoadRoleSettings(): void
@@ -168,8 +198,12 @@ class AdminSettings
             wp_send_json_error('Insufficient permissions');
         }
 
-        $role = sanitize_text_field($_POST['role']);
-        $tab = isset($_POST['tab']) ? sanitize_text_field($_POST['tab']) : 'menu-items';
+        $role = isset($_POST['role']) ? sanitize_text_field(wp_unslash($_POST['role'])) : '';
+        if (empty($role)) {
+            wp_send_json_error('Role is required');
+        }
+
+        $tab = isset($_POST['tab']) ? sanitize_text_field(wp_unslash($_POST['tab'])) : 'menu-items';
         
         if ($tab === 'menu-items') {
             $settings = get_option('sa_menu_settings_' . $role, []);
@@ -186,19 +220,25 @@ class AdminSettings
             wp_die('Insufficient permissions');
         }
 
-        check_admin_referer('simplify-admin-options');
+        // Verify nonce
+        $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
+        if (empty($nonce) || !wp_verify_nonce($nonce, 'simplify-admin-options')) {
+            wp_die('Invalid nonce');
+        }
 
-        $role = sanitize_text_field($_POST['selected_role']);
+        $role = isset($_POST['selected_role']) ? sanitize_text_field(wp_unslash($_POST['selected_role'])) : '';
 
         if (empty($role)) {
             wp_die('Role is required');
         }
 
-        $tab = isset($_POST['tab']) ? sanitize_text_field($_POST['tab']) : 'menu-items';
+        $tab = isset($_POST['tab']) ? sanitize_text_field(wp_unslash($_POST['tab'])) : 'menu-items';
         $settings = [];
 
-        if (isset($_POST['sa_settings']) && is_array($_POST['sa_settings'])) {
-            foreach ($_POST['sa_settings'] as $key => $value) {
+        $postSettings = array_map('sanitize_text_field', isset($_POST['sa_settings']) ? wp_unslash($_POST['sa_settings']) : []);
+
+        if (isset($postSettings) && is_array($postSettings)) {
+            foreach ($postSettings as $key => $value) {
                 $cleanKey = sanitize_text_field($key);
                 if ($tab === 'admin-bar') {
                     // Remove admin_bar_ prefix for storage
@@ -219,7 +259,8 @@ class AdminSettings
             [
                 'page' => 'simplify-admin',
                 'tab' => $tab,
-                'settings-updated' => 'true'
+                'settings-updated' => 'true',
+                '_wpnonce' => wp_create_nonce('simplify-admin-settings-updated')
             ],
             admin_url('options-general.php')
         ));
@@ -241,14 +282,22 @@ class AdminSettings
             return;
         }
 
+        // Verify nonce if POST request
+        if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
+            if (empty($nonce) || !wp_verify_nonce($nonce, 'simplify-admin-options')) {
+                wp_die('Invalid nonce');
+            }
+        }
+
         $roles = array_map('translate_user_role', wp_roles()->get_names());
         $menuItems = $this->menuSettings->getMenuItems();
         $adminBarItems = $this->adminBarSettings->getAdminBarItems();
         $currentRole = isset($_POST['selected_role']) 
-            ? sanitize_text_field($_POST['selected_role']) 
+            ? sanitize_text_field(wp_unslash($_POST['selected_role'])) 
             : $this->getCurrentRole();
         $currentTab = isset($_GET['tab']) 
-            ? sanitize_text_field($_GET['tab']) 
+            ? sanitize_text_field(wp_unslash($_GET['tab'])) 
             : 'menu-items';
         
         // Get appropriate settings based on tab
@@ -264,9 +313,18 @@ class AdminSettings
     public function displaySettingsUpdatedNotice(): void
     {
         $screen = get_current_screen();
+        
+        // Verify settings update nonce
+        if (isset($_GET['_wpnonce'])) {
+            $nonce = sanitize_text_field(wp_unslash($_GET['_wpnonce']));
+            if (!wp_verify_nonce($nonce, 'simplify-admin-settings-updated')) {
+                return;
+            }
+        }
+
         if ($screen->id === 'settings_page_simplify-admin' 
             && isset($_GET['settings-updated']) 
-            && $_GET['settings-updated'] === 'true'
+            && sanitize_text_field(wp_unslash($_GET['settings-updated'])) === 'true'
         ) {
             echo '<div class="notice notice-success is-dismissible"><p>' 
                 . esc_html__('Settings saved successfully!', 'simplify-admin') 

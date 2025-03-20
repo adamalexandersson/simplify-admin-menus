@@ -5,6 +5,7 @@ namespace SimplifyAdmin;
 use function add_action;
 use function get_option;
 use function wp_get_current_user;
+use function wp_strip_all_tags;
 use function __;
 
 /**
@@ -80,7 +81,7 @@ class AdminBarSettings
 
                 $structure[$node->id] = [
                     'id' => $node->id,
-                    'title' => $this->getMappedTitle($node->id, strip_tags($node->title)),
+                    'title' => $this->getMappedTitle($node->id, wp_strip_all_tags($node->title)),
                     'parent' => $node->parent,
                     'children' => $children
                 ];

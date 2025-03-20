@@ -16,6 +16,7 @@ use function checked;
 use function esc_attr;
 use function esc_html;
 use function esc_html__;
+use function esc_html_e;
 use function esc_url;
 use function get_admin_page_title;
 use function selected;
@@ -36,7 +37,7 @@ use function printf;
         <?php wp_nonce_field('simplify-admin-options'); ?>
         <div class="sa-container">
             <div class="sa-roles-column">
-                <h2><?php _e('User Roles', 'simplify-admin'); ?></h2>
+                <h2><?php esc_html_e('User Roles', 'simplify-admin'); ?></h2>
                 <ul class="sa-roles-list">
                     <?php foreach ($roles as $role_slug => $role_name) : ?>
                         <li>
@@ -53,11 +54,11 @@ use function printf;
                     <nav class="nav-tab-wrapper">
                         <a href="?page=simplify-admin&tab=menu-items" class="nav-tab <?php echo $currentTab === 'menu-items' ? 'nav-tab-active' : ''; ?>">
                             <span class="dashicons dashicons-menu-alt"></span>
-                            <?php _e('Menu Items', 'simplify-admin'); ?>
+                            <?php esc_html_e('Menu Items', 'simplify-admin'); ?>
                         </a>
                         <a href="?page=simplify-admin&tab=admin-bar" class="nav-tab <?php echo $currentTab === 'admin-bar' ? 'nav-tab-active' : ''; ?>">
                             <span class="dashicons dashicons-admin-tools"></span>
-                            <?php _e('Admin Bar', 'simplify-admin'); ?>
+                            <?php esc_html_e('Admin Bar', 'simplify-admin'); ?>
                         </a>
                     </nav>
                     <div class="sa-settings-content">
@@ -66,16 +67,21 @@ use function printf;
                                 <h2 class="sa-content-header-title">
                                     <?php 
                                         if ($currentTab === 'menu-items') {
-                                            _e('Menu Items', 'simplify-admin');
+                                            esc_html_e('Menu Items', 'simplify-admin');
                                         } else {
-                                            _e('Admin Bar', 'simplify-admin');
+                                            esc_html_e('Admin Bar', 'simplify-admin');
                                         }
                                     ?>
                                 </h2>
-                                <span class="sa-current-role"><?php printf(__('Editing: %s', 'simplify-admin'), esc_html($roles[$currentRole])); ?></span>
+                                <span class="sa-current-role">
+                                    <?php 
+                                        /* translators: %s: User role name */
+                                        printf(esc_html__('Editing: %s', 'simplify-admin'), esc_html($roles[$currentRole])); 
+                                    ?>
+                                </span>
                             </div>
 
-                            <p class="sa-content-header-description"><?php _e('Choose which items to hide', 'simplify-admin'); ?></p>
+                            <p class="sa-content-header-description"><?php esc_html_e('Choose which items to hide', 'simplify-admin'); ?></p>
                         </div>
 
                         <?php if ($currentTab === 'menu-items'): ?>
@@ -87,7 +93,7 @@ use function printf;
                                                 <input type="checkbox" 
                                                        name="sa_settings[<?php echo esc_attr($menu_item['id']); ?>]" 
                                                        <?php checked(isset($settings[$menu_item['id']])); ?>>
-                                                <?php echo $menu_item['title']; ?>
+                                                <?php echo esc_html($menu_item['title']); ?>
                                             </label>
                                             
                                             <?php if (!empty($menu_item['submenu'])) : ?>
@@ -130,7 +136,7 @@ use function printf;
                                 }
                                 
                                 if (empty($adminBarItems)): ?>
-                                    <p><?php _e('No admin bar items found.', 'simplify-admin'); ?></p>
+                                    <p><?php esc_html_e('No admin bar items found.', 'simplify-admin'); ?></p>
                                 <?php else: 
                                     foreach ($adminBarItems as $item): 
                                         renderAdminBarItem($item, $settings);
@@ -143,7 +149,7 @@ use function printf;
                 </div>
 
                 <div class="sa-save-box">
-                    <?php submit_button(__('Save Settings', 'simplify-admin'), 'primary', 'submit', false); ?>
+                    <?php submit_button(esc_html__('Save Settings', 'simplify-admin'), 'primary', 'submit', false); ?>
                 </div>
             </div>
         </div>
