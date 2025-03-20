@@ -1,0 +1,338 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+.sa {
+    $parent: &;
+
+    &-container {
+        @include m.flex($gap: v.$spacing-2xl);
+        margin-top: v.$spacing-base;
+        max-width: v.$max-container-width;
+        position: relative;
+
+        @include m.responsive(mobile) {
+            flex-direction: column;
+        }
+    }
+
+    &-content-wrapper {
+        @include m.flex($gap: v.$spacing-2xl);
+        flex: 1;
+    }
+
+    &-save-box {
+        flex: 0 0 v.$save-box-width;
+        @include m.sticky(62px);
+        height: fit-content;
+        @include m.card;
+        padding: v.$spacing-xl;
+
+        .button-primary {
+            width: 100%;
+            text-align: center;
+            margin: 0;
+            background: v.$color-primary;
+            border-color: v.$color-primary;
+
+            &:hover {
+                background: v.$color-primary;
+                border-color: v.$color-primary;
+                filter: brightness(0.9);
+            }
+        }
+
+        @include m.responsive(tablet) {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            top: auto;
+            z-index: v.$z-index-sticky;
+            border-radius: 0;
+            padding: v.$spacing-base;
+            margin-left: 0;
+            background: v.$color-white;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08);
+        }
+    }
+
+    &-roles-column {
+        flex: 0 0 v.$sidebar-width;
+        @include m.card;
+        @include m.sticky(62px);
+        height: fit-content;
+
+        @include m.responsive(mobile) {
+            position: static;
+        }
+
+        h2 {
+            margin-top: 0;
+            padding: v.$spacing-lg v.$spacing-xl;
+            border-bottom: 1px solid v.$color-border;
+            margin-bottom: 0;
+            color: v.$color-text;
+            font-size: v.$font-size-lg;
+        }
+    }
+
+    &-roles-list {
+        margin: 0;
+        padding: v.$spacing-xl;
+        list-style: none;
+
+        li {
+            margin-bottom: v.$spacing-sm;
+            @include m.transition;
+
+            &.active label {
+                background: v.$color-secondary-light;
+                color: v.$color-secondary;
+                font-weight: 500;
+            }
+        }
+
+        label {
+            @include m.flex($gap: v.$spacing-sm);
+            align-items: center;
+            cursor: pointer;
+            padding: v.$spacing-md v.$spacing-md;
+            border-radius: v.$border-radius-base;
+            @include m.transition;
+            color: v.$color-text-secondary;
+
+            &:hover {
+                background: v.$color-secondary-light;
+                color: v.$color-secondary;
+            }
+        }
+
+        input[type="radio"]:checked + span {
+            color: v.$color-secondary;
+            font-weight: 600;
+        }
+    }
+
+    &-settings-column {
+        flex: 1;
+        @include m.card;
+    }
+
+    &-settings-content {
+        padding: v.$spacing-xl;
+    }
+
+    &-menu-items-list,
+    &-admin-bar-items-list {
+        @include m.flex($direction: column, $gap: v.$spacing-base);
+    }
+
+    &-menu-item {
+        border-bottom: 1px solid v.$color-border;
+        padding-bottom: v.$spacing-base;
+        @include m.transition;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        > label {
+            font-weight: 600;
+            @include m.flex($gap: v.$spacing-sm);
+            align-items: center;
+            cursor: pointer;
+            color: v.$color-text;
+
+            span {
+                display: none;
+            }
+        }
+    }
+
+    &-submenu-items {
+        margin-left: v.$spacing-2xl;
+        margin-top: v.$spacing-md;
+        @include m.flex($direction: column, $gap: v.$spacing-sm);
+        padding-left: v.$spacing-base;
+        border-left: 2px solid v.$color-border;
+
+        label {
+            @include m.flex($gap: v.$spacing-sm);
+            align-items: center;
+            cursor: pointer;
+            color: v.$color-text-secondary;
+        }
+
+        #{$parent}-menu-item {
+            border-bottom: none;
+            padding-bottom: 0.1rem;
+        }
+    }
+
+    &-current-role {
+        font-size: v.$font-size-xs;
+        color: v.$color-primary;
+        font-weight: 500;
+        padding: v.$spacing-xs v.$spacing-md;
+        background: v.$color-primary-light;
+        border-radius: v.$border-radius-sm;
+        border: 1px solid v.$color-primary-border;
+        @include m.transition(all, v.$transition-duration-long);
+        white-space: nowrap;
+    }
+}
+
+// Tab Navigation Styles
+.nav-tab-wrapper {
+    margin: 0;
+    padding: v.$spacing-base v.$spacing-xl 0;
+    border-bottom: 1px solid v.$color-border;
+    @include m.flex($gap: v.$spacing-sm);
+    background: v.$color-white;
+    border-top-left-radius: v.$border-radius-lg;
+    border-top-right-radius: v.$border-radius-lg;
+}
+
+.nav-tab {
+    padding: v.$spacing-md 0;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+    color: v.$color-text-secondary;
+    text-decoration: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    @include m.transition;
+    background: transparent;
+    margin-left: v.$spacing-lg;
+    float: none;
+
+    &:first-child {
+        margin-left: 0;
+    }
+
+    &:hover {
+        color: v.$color-primary;
+        background: transparent;
+        border-bottom-color: v.$color-primary;
+        border-bottom-width: 2px;
+    }
+
+    &-active {
+        color: v.$color-primary;
+        border-bottom-color: v.$color-primary;
+        border-bottom-width: 2px;
+        font-weight: 600;
+        background: transparent;
+
+        &:hover {
+            background: transparent;
+            color: v.$color-primary;
+        }
+    }
+}
+
+// Content Header Styles
+.sa-content-header {
+    margin-bottom: v.$spacing-2xl;
+    padding-bottom: v.$spacing-base;
+    border-bottom: 1px solid v.$color-border;
+
+    &-top {
+        @include m.flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: v.$spacing-sm;
+    }
+
+    &-title {
+        margin: 0;
+        color: v.$color-text;
+        font-size: v.$font-size-xl;
+        font-weight: 600;
+    }
+
+    &-description {
+        color: v.$color-text-tertiary;
+        font-size: v.$font-size-sm;
+        margin: v.$spacing-sm 0 0;
+        line-height: 1.5;
+    }
+}
+
+// Form Controls
+.sa-container {
+    input[type="checkbox"] {
+        @include m.checkbox-base;
+        border-radius: v.$border-radius-sm;
+
+        &:hover {
+            border-color: v.$color-secondary;
+        }
+
+        &:checked {
+            background: v.$color-secondary;
+            border-color: v.$color-secondary;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 45%;
+                width: 3px;
+                height: 8px;
+                margin: 0;
+                border: solid v.$color-white;
+                border-width: 0 1.5px 1.5px 0;
+                transform: translate(-50%, -50%) rotate(45deg);
+                display: block;
+            }
+        }
+
+        &:indeterminate {
+            background: v.$color-white;
+            border-color: v.$color-secondary;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 8px;
+                height: 2px;
+                margin: 0;
+                background: v.$color-secondary;
+                transform: translate(-50%, -50%);
+                display: block;
+            }
+        }
+    }
+
+    input[type="radio"] {
+        @include m.checkbox-base;
+        border-radius: 50%;
+
+        &:hover {
+            border-color: v.$color-secondary;
+        }
+
+        &:checked {
+            border-color: v.$color-secondary;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 8px;
+                height: 8px;
+                margin: 0;
+                border-radius: 50%;
+                background: v.$color-secondary;
+                transform: translate(-50%, -50%);
+                display: block;
+            }
+        }
+    }
+}

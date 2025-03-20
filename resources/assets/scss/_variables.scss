@@ -1,0 +1,54 @@
+// Colors
+$color-primary: var(--wp-admin-color-primary, #2271b1);
+$color-secondary: var(--wp-admin-color-secondary, #2c3338);
+$color-primary-light: var(--wp-admin-color-primary-light, color-mix(in srgb, #2271b1 10%, transparent));
+$color-primary-border: var(--wp-admin-color-primary-border, color-mix(in srgb, #2271b1 20%, transparent));
+$color-secondary-light: var(--wp-admin-color-secondary-light, color-mix(in srgb, #2c3338 10%, transparent));
+$color-secondary-border: var(--wp-admin-color-secondary-border, color-mix(in srgb, #2c3338 20%, transparent));
+
+// Text Colors
+$color-text: #1d2327;
+$color-text-secondary: #50575e;
+$color-text-tertiary: #646970;
+
+// UI Colors
+$color-border: #e2e4e7;
+$color-white: #fff;
+$color-checkbox-border: #8c8f94;
+$color-success-border: #c5ded6;
+
+// Spacing
+$spacing-xs: 0.4em;
+$spacing-sm: 0.5rem;
+$spacing-md: 0.75rem;
+$spacing-base: 1rem;
+$spacing-lg: 1.3rem;
+$spacing-xl: 1.5rem;
+$spacing-2xl: 2rem;
+
+// Layout
+$sidebar-width: 250px;
+$save-box-width: 120px;
+$max-container-width: 1500px;
+
+// Typography
+$font-size-xs: 0.85em;
+$font-size-sm: 0.9em;
+$font-size-base: 1em;
+$font-size-lg: 1.2em;
+$font-size-xl: 1.4em;
+
+// Borders
+$border-radius-sm: 3px;
+$border-radius-base: 4px;
+$border-radius-lg: 6px;
+
+// Transitions
+$transition-duration: 0.2s;
+$transition-duration-long: 0.3s;
+
+// Shadows
+$shadow-base: 0 2px 4px rgba(0, 0, 0, 0.08);
+
+// Z-index
+$z-index-sticky: 100; 

@@ -1,0 +1,86 @@
+# Copyright (C) 2025 Adam Alexandersson
+# This file is distributed under the GPL v3 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Simplify Admin 1.2.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simplify-admin\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-03-20T15:00:57+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: simplify-admin\n"
+
+#. Plugin Name of the plugin
+#: simplify-admin.php
+#: app/AdminSettings.php:74
+#: app/AdminSettings.php:75
+msgid "Simplify Admin"
+msgstr ""
+
+#. Description of the plugin
+#: simplify-admin.php
+msgid "WordPress plugin that simplifies the admin panel menus and admin bar based on user roles."
+msgstr ""
+
+#. Author of the plugin
+#: simplify-admin.php
+msgid "Adam Alexandersson"
+msgstr ""
+
+#: app/AdminBarSettings.php:37
+msgid "Updates"
+msgstr ""
+
+#: app/AdminBarSettings.php:38
+msgid "Comments"
+msgstr ""
+
+#: app/AdminBarSettings.php:39
+msgid "My account"
+msgstr ""
+
+#: app/AdminBarSettings.php:40
+msgid "Litespeed Menu"
+msgstr ""
+
+#: app/AdminSettings.php:106
+msgid "Editing:"
+msgstr ""
+
+#: app/AdminSettings.php:272
+msgid "Settings saved successfully!"
+msgstr ""
+
+#: resources/views/settings-page.php:39
+msgid "User Roles"
+msgstr ""
+
+#: resources/views/settings-page.php:56
+#: resources/views/settings-page.php:69
+msgid "Menu Items"
+msgstr ""
+
+#: resources/views/settings-page.php:60
+#: resources/views/settings-page.php:71
+msgid "Admin Bar"
+msgstr ""
+
+#: resources/views/settings-page.php:75
+msgid "Editing: %s"
+msgstr ""
+
+#: resources/views/settings-page.php:78
+msgid "Choose which items to hide"
+msgstr ""
+
+#: resources/views/settings-page.php:133
+msgid "No admin bar items found."
+msgstr ""
+
+#: resources/views/settings-page.php:146
+msgid "Save Settings"
+msgstr ""

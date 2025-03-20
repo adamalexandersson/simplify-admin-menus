@@ -1,0 +1,57 @@
+@use 'variables' as v;
+
+@mixin transition($property: all, $duration: v.$transition-duration) {
+    transition: $property $duration ease-in-out;
+}
+
+@mixin flex($direction: row, $gap: 0) {
+    display: flex;
+    flex-direction: $direction;
+    @if $gap != 0 {
+        gap: $gap;
+    }
+}
+
+@mixin sticky($top: 0) {
+    position: sticky;
+    top: $top;
+}
+
+@mixin card {
+    background: v.$color-white;
+    border-radius: v.$border-radius-lg;
+    box-shadow: v.$shadow-base;
+    border: 1px solid v.$color-border;
+}
+
+@mixin checkbox-base {
+    position: relative;
+    border: 1px solid v.$color-checkbox-border;
+    background: v.$color-white;
+    cursor: pointer;
+    line-height: 0;
+    margin: 0 v.$spacing-sm 0 0;
+    outline: 0;
+    padding: 0 !important;
+    vertical-align: middle;
+    height: 18px;
+    width: 18px;
+    -webkit-appearance: none;
+    appearance: none;
+    @include transition;
+    box-sizing: border-box;
+}
+
+@mixin responsive($breakpoint) {
+    @if $breakpoint == mobile {
+        @media screen and (max-width: 900px) {
+            @content;
+        }
+    }
+
+    @if $breakpoint == tablet {
+        @media screen and (max-width: 1200px) {
+            @content;
+        }
+    }
+} 
