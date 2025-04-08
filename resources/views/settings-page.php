@@ -31,7 +31,7 @@ use function printf;
 <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
-    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="simplify-admin-form" data-current-tab="<?php echo esc_attr($currentTab); ?>">
+    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="simplify-admin-form" class="simplify-admin-form" data-current-tab="<?php echo esc_attr($currentTab); ?>">
         <input type="hidden" name="action" value="save_sa_settings">
         <input type="hidden" name="tab" value="<?php echo esc_attr($currentTab); ?>">
         <?php wp_nonce_field('simplify-admin-options'); ?>
@@ -42,8 +42,31 @@ use function printf;
                     <?php foreach ($roles as $role_slug => $role_name) : ?>
                         <li>
                             <label>
-                                <input type="radio" name="selected_role" value="<?php echo esc_attr($role_slug); ?>" <?php checked($role_slug === 'administrator'); ?>>
+                                <input type="radio" name="selected_role" value="<?php echo esc_attr($role_slug); ?>" <?php checked($role_slug === $selectedRole && !$selectedUser); ?>>
                                 <span><?php echo esc_html($role_name); ?></span>
+                            </label>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+
+                <h2><?php esc_html_e('Users', 'simplify-admin'); ?></h2>
+                <div class="sa-users-search">
+                    <input type="text" id="sa-user-search" placeholder="<?php esc_attr_e('Search users...', 'simplify-admin'); ?>">
+                </div>
+                <ul class="sa-users-list">
+                    <?php foreach ($users as $user) : ?>
+                        <li>
+                            <label>
+                                <input type="radio" name="selected_user" value="<?php echo esc_attr($user->ID); ?>" <?php checked($selectedUser && $selectedUser->ID === $user->ID); ?>>
+                                <span>
+                                    <?php 
+                                        echo esc_html($user->display_name);
+                                        $user_roles = array_map(function($role) use ($roles) {
+                                            return isset($roles[$role]) ? $roles[$role] : $role;
+                                        }, $user->roles);
+                                        echo ' <small>(' . esc_html(implode(', ', $user_roles)) . ')</small>';
+                                    ?>
+                                </span>
                             </label>
                         </li>
                     <?php endforeach; ?>
@@ -52,11 +75,25 @@ use function printf;
             <div class="sa-content-wrapper">
                 <div class="sa-settings-column">
                     <nav class="nav-tab-wrapper">
-                        <a href="?page=simplify-admin&tab=menu-items" class="nav-tab <?php echo $currentTab === 'menu-items' ? 'nav-tab-active' : ''; ?>">
+                        <?php
+                            $tabUrlArgs = [
+                                'page' => 'simplify-admin',
+                                '_wpnonce' => wp_create_nonce('simplify-admin-settings')
+                            ];
+                            
+                            if ($selectedUser) {
+                                $tabUrlArgs['selected_user'] = $selectedUser->ID;
+                            } elseif ($selectedRole) {
+                                $tabUrlArgs['selected_role'] = $selectedRole;
+                            }
+                        ?>
+                        <a href="<?php echo esc_url(add_query_arg(array_merge($tabUrlArgs, ['tab' => 'menu-items']), admin_url('options-general.php'))); ?>" 
+                           class="nav-tab <?php echo $currentTab === 'menu-items' ? 'nav-tab-active' : ''; ?>">
                             <span class="dashicons dashicons-menu-alt"></span>
                             <?php esc_html_e('Menu Items', 'simplify-admin'); ?>
                         </a>
-                        <a href="?page=simplify-admin&tab=admin-bar" class="nav-tab <?php echo $currentTab === 'admin-bar' ? 'nav-tab-active' : ''; ?>">
+                        <a href="<?php echo esc_url(add_query_arg(array_merge($tabUrlArgs, ['tab' => 'admin-bar']), admin_url('options-general.php'))); ?>" 
+                           class="nav-tab <?php echo $currentTab === 'admin-bar' ? 'nav-tab-active' : ''; ?>">
                             <span class="dashicons dashicons-admin-tools"></span>
                             <?php esc_html_e('Admin Bar', 'simplify-admin'); ?>
                         </a>
@@ -75,13 +112,25 @@ use function printf;
                                 </h2>
                                 <span class="sa-current-role">
                                     <?php 
-                                        /* translators: %s: User role name */
-                                        printf(esc_html__('Editing: %s', 'simplify-admin'), esc_html($roles[$currentRole])); 
+                                        if ($selectedUser) {
+                                            /* translators: %s: User display name */
+                                            printf(esc_html__('Editing user: %s', 'simplify-admin'), esc_html($selectedUser->display_name));
+                                        } else {
+                                            /* translators: %s: User role name */
+                                            printf(esc_html__('Editing role: %s', 'simplify-admin'), esc_html($roles[$selectedRole])); 
+                                        }
                                     ?>
                                 </span>
                             </div>
 
                             <p class="sa-content-header-description"><?php esc_html_e('Choose which items to hide', 'simplify-admin'); ?></p>
+                        </div>
+
+                        <div class="sa-loading-overlay">
+                            <div class="sa-loading-spinner">
+                                <div class="sa-spinner-circle"></div>
+                                <div class="sa-spinner-text"><?php esc_html_e('Loading settings...', 'simplify-admin'); ?></div>
+                            </div>
                         </div>
 
                         <?php if ($currentTab === 'menu-items'): ?>

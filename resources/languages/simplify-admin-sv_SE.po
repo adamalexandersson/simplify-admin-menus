@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Simplify Admin 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simplify-admin\n"
-"POT-Creation-Date: 2025-03-20T15:00:57+00:00\n"
-"PO-Revision-Date: 2025-03-20 16:02+0100\n"
+"POT-Creation-Date: 2025-04-08T15:01:02+00:00\n"
+"PO-Revision-Date: 2025-04-08 17:01+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Domain: simplify-admin\n"
 
 #. Plugin Name of the plugin
-#: simplify-admin.php app/AdminSettings.php:74 app/AdminSettings.php:75
+#: simplify-admin.php app/AdminSettings.php:83 app/AdminSettings.php:84
 msgid "Simplify Admin"
 msgstr "Förenkla admingränssnitt"
 
@@ -34,54 +34,72 @@ msgstr ""
 msgid "Adam Alexandersson"
 msgstr "Adam Alexandersson"
 
-#: app/AdminBarSettings.php:37
+#: app/AdminBarSettings.php:39
 msgid "Updates"
 msgstr "Uppdateringar"
 
-#: app/AdminBarSettings.php:38
+#: app/AdminBarSettings.php:40
 msgid "Comments"
 msgstr "Kommentarer"
 
-#: app/AdminBarSettings.php:39
+#: app/AdminBarSettings.php:41
 msgid "My account"
 msgstr "Mitt konto"
 
-#: app/AdminBarSettings.php:40
+#: app/AdminBarSettings.php:42
 msgid "Litespeed Menu"
 msgstr "Litespeed Meny"
 
-#: app/AdminSettings.php:106
+#: app/AdminSettings.php:115
 msgid "Editing:"
 msgstr "Redigering:"
 
-#: app/AdminSettings.php:272
+#: app/AdminSettings.php:413
 msgid "Settings saved successfully!"
 msgstr "Inställningarna har sparats!"
 
-#: resources/views/settings-page.php:39
+#: resources/views/settings-page.php:40
 msgid "User Roles"
 msgstr "Användarroller"
 
-#: resources/views/settings-page.php:56 resources/views/settings-page.php:69
+#: resources/views/settings-page.php:52
+msgid "Users"
+msgstr "Användare"
+
+#: resources/views/settings-page.php:54
+msgid "Search users..."
+msgstr "Sök användare…"
+
+#: resources/views/settings-page.php:92 resources/views/settings-page.php:106
 msgid "Menu Items"
 msgstr "Sidomeny"
 
-#: resources/views/settings-page.php:60 resources/views/settings-page.php:71
+#: resources/views/settings-page.php:97 resources/views/settings-page.php:108
 msgid "Admin Bar"
 msgstr "Adminfält"
 
-#: resources/views/settings-page.php:75
-msgid "Editing: %s"
-msgstr "Redigering: %s"
+#. translators: %s: User display name
+#: resources/views/settings-page.php:116
+msgid "Editing user: %s"
+msgstr "Redigerar användare: %s"
 
-#: resources/views/settings-page.php:78
+#. translators: %s: User role name
+#: resources/views/settings-page.php:119
+msgid "Editing role: %s"
+msgstr "Redigerar roll: %s"
+
+#: resources/views/settings-page.php:125
 msgid "Choose which items to hide"
 msgstr "Välj vilka alternativ som ska döljas"
 
-#: resources/views/settings-page.php:133
+#: resources/views/settings-page.php:131
+msgid "Loading settings..."
+msgstr "Laddar inställningar…"
+
+#: resources/views/settings-page.php:187
 msgid "No admin bar items found."
 msgstr "Inget adminrad objekt hittades."
 
-#: resources/views/settings-page.php:146
+#: resources/views/settings-page.php:200
 msgid "Save Settings"
 msgstr "Spara inställningar"

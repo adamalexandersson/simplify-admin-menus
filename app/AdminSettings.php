@@ -32,6 +32,13 @@ use function __;
 use function translate_user_role;
 use function wp_unslash;
 use function is_array;
+use function get_users;
+use function get_user_meta;
+use function update_user_meta;
+use function get_user_by;
+use function delete_user_meta;
+use function delete_option;
+use function absint;
 
 /**
  * Admin Settings Class
@@ -66,7 +73,7 @@ class AdminSettings
         add_action('admin_enqueue_scripts', [$this, 'setAdminProfileColors']);
         add_action('admin_init', [$this, 'registerSettings']);
         add_action('admin_post_save_sa_settings', [$this, 'handleFormSubmission']);
-        add_action('wp_ajax_load_role_settings', [$this, 'ajaxLoadRoleSettings']);
+        add_action('wp_ajax_load_settings', [$this, 'ajaxLoadSettings']);
         add_action('admin_notices', [$this, 'displaySettingsUpdatedNotice']);
     }
 
@@ -190,7 +197,7 @@ class AdminSettings
         );
     }
 
-    public function ajaxLoadRoleSettings(): void
+    public function ajaxLoadSettings(): void
     {
         check_ajax_referer('simplify-admin-nonce', 'nonce');
 
@@ -199,19 +206,39 @@ class AdminSettings
         }
 
         $role = isset($_POST['role']) ? sanitize_text_field(wp_unslash($_POST['role'])) : '';
-        if (empty($role)) {
-            wp_send_json_error('Role is required');
+        $userId = isset($_POST['user_id']) ? absint($_POST['user_id']) : 0;
+        
+        if (empty($role) && empty($userId)) {
+            wp_send_json_error('Role or User ID is required');
         }
 
         $tab = isset($_POST['tab']) ? sanitize_text_field(wp_unslash($_POST['tab'])) : 'menu-items';
         
-        if ($tab === 'menu-items') {
-            $settings = get_option('sa_menu_settings_' . $role, []);
-        } else {
-            $settings = get_option('sa_adminbar_settings_' . $role, []);
-        }
+        if ($userId) {
+            if ($tab === 'menu-items') {
+                $settings = get_user_meta($userId, 'sa_menu_settings', true) ?: [];
+            } else {
+                $settings = get_user_meta($userId, 'sa_adminbar_settings', true) ?: [];
+            }
 
-        wp_send_json_success($settings);
+            $user = get_user_by('id', $userId);
+            $userRole = $user && !empty($user->roles) ? $user->roles[0] : '';
+
+            wp_send_json_success([
+                'settings' => $settings,
+                'role' => $userRole
+            ]);
+        } else {
+            if ($tab === 'menu-items') {
+                $settings = get_option('sa_menu_settings_' . $role, []);
+            } else {
+                $settings = get_option('sa_adminbar_settings_' . $role, []);
+            }
+
+            wp_send_json_success([
+                'settings' => $settings
+            ]);
+        }
     }
 
     public function handleFormSubmission(): void
@@ -227,9 +254,10 @@ class AdminSettings
         }
 
         $role = isset($_POST['selected_role']) ? sanitize_text_field(wp_unslash($_POST['selected_role'])) : '';
+        $userId = isset($_POST['selected_user']) ? absint($_POST['selected_user']) : 0;
 
-        if (empty($role)) {
-            wp_die('Role is required');
+        if (empty($role) && empty($userId)) {
+            wp_die('Role or User ID is required');
         }
 
         $tab = isset($_POST['tab']) ? sanitize_text_field(wp_unslash($_POST['tab'])) : 'menu-items';
@@ -241,30 +269,61 @@ class AdminSettings
             foreach ($postSettings as $key => $value) {
                 $cleanKey = sanitize_text_field($key);
                 if ($tab === 'admin-bar') {
-                    // Remove admin_bar_ prefix for storage
                     $cleanKey = str_replace('admin_bar_', '', $cleanKey);
                 }
                 $settings[$cleanKey] = true;
             }
         }
 
-        if ($tab === 'menu-items') {
-            update_option('sa_menu_settings_' . $role, $settings);
+        $settingsKey = $this->getSettingsKey($tab);
+
+        if ($userId) {
+            $this->handleUserSettings($userId, $settingsKey, $settings);
         } else {
-            update_option('sa_adminbar_settings_' . $role, $settings);
+            $this->handleRoleSettings($role, $settingsKey, $settings);
         }
 
-        // Redirect back to the settings page with a success message
-        wp_redirect(add_query_arg(
-            [
-                'page' => 'simplify-admin',
-                'tab' => $tab,
-                'settings-updated' => 'true',
-                '_wpnonce' => wp_create_nonce('simplify-admin-settings-updated')
-            ],
-            admin_url('options-general.php')
-        ));
+        // Build redirect URL with all necessary parameters
+        $redirectArgs = [
+            'page' => 'simplify-admin',
+            'tab' => $tab,
+            'settings-updated' => 'true',
+            '_wpnonce' => wp_create_nonce('simplify-admin-settings-updated')
+        ];
+
+        // Add either selected_role or selected_user parameter
+        if ($userId) {
+            $redirectArgs['selected_user'] = $userId;
+        } else {
+            $redirectArgs['selected_role'] = $role;
+        }
+
+        wp_redirect(add_query_arg($redirectArgs, admin_url('options-general.php')));
         exit;
+    }
+
+    private function getSettingsKey(string $tab): string
+    {
+        return $tab === 'menu-items' ? 'sa_menu_settings' : 'sa_adminbar_settings';
+    }
+
+    private function handleUserSettings(int $userId, string $key, array $settings): void
+    {
+        if (empty($settings)) {
+            delete_user_meta($userId, $key);
+        } else {
+            update_user_meta($userId, $key, $settings);
+        }
+    }
+
+    private function handleRoleSettings(string $role, string $key, array $settings): void
+    {
+        $optionKey = $key . '_' . $role;
+        if (empty($settings)) {
+            delete_option($optionKey);
+        } else {
+            update_option($optionKey, $settings);
+        }
     }
 
     private function getCurrentRole(): string
@@ -293,6 +352,24 @@ class AdminSettings
         $roles = array_map('translate_user_role', wp_roles()->get_names());
         $menuItems = $this->menuSettings->getMenuItems();
         $adminBarItems = $this->adminBarSettings->getAdminBarItems();
+        $selectedRole = $this->getSelectedRole();
+        $selectedUser = $this->getSelectedUser();
+        
+        $users = get_users([
+            'orderby' => 'display_name',
+            'order' => 'ASC'
+        ]);
+        $currentUser = null;
+        if (isset($_REQUEST['selected_user'])) {
+            $userId = absint($_REQUEST['selected_user']);
+            foreach ($users as $user) {
+                if ($user->ID === $userId) {
+                    $currentUser = $user;
+                    break;
+                }
+            }
+        }
+
         $currentRole = isset($_POST['selected_role']) 
             ? sanitize_text_field(wp_unslash($_POST['selected_role'])) 
             : $this->getCurrentRole();
@@ -300,11 +377,18 @@ class AdminSettings
             ? sanitize_text_field(wp_unslash($_GET['tab'])) 
             : 'menu-items';
         
-        // Get appropriate settings based on tab
         if ($currentTab === 'menu-items') {
-            $settings = get_option('sa_menu_settings_' . $currentRole, []);
+            if ($currentUser) {
+                $settings = get_user_meta($currentUser->ID, 'sa_menu_settings', true) ?: [];
+            } else {
+                $settings = get_option('sa_menu_settings_' . $currentRole, []);
+            }
         } else {
-            $settings = get_option('sa_adminbar_settings_' . $currentRole, []);
+            if ($currentUser) {
+                $settings = get_user_meta($currentUser->ID, 'sa_adminbar_settings', true) ?: [];
+            } else {
+                $settings = get_option('sa_adminbar_settings_' . $currentRole, []);
+            }
         }
 
         include $this->pluginPath . 'resources/views/settings-page.php';
@@ -314,7 +398,6 @@ class AdminSettings
     {
         $screen = get_current_screen();
         
-        // Verify settings update nonce
         if (isset($_GET['_wpnonce'])) {
             $nonce = sanitize_text_field(wp_unslash($_GET['_wpnonce']));
             if (!wp_verify_nonce($nonce, 'simplify-admin-settings-updated')) {
@@ -330,5 +413,46 @@ class AdminSettings
                 . esc_html__('Settings saved successfully!', 'simplify-admin') 
                 . '</p></div>';
         }
+    }
+
+    private function getSelectedRole(): ?string
+    {
+        // Verify nonce for role selection
+        $nonce = isset($_REQUEST['_wpnonce']) ? wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'simplify-admin-settings') : false;
+        
+        if (!$nonce && !wp_verify_nonce(wp_create_nonce('simplify-admin-settings'), 'simplify-admin-settings')) {
+            return 'administrator';
+        }
+
+        $selectedRole = isset($_GET['selected_role']) 
+            ? sanitize_text_field(wp_unslash($_GET['selected_role'])) 
+            : null;
+
+        if ($selectedRole && array_key_exists($selectedRole, wp_roles()->get_names())) {
+            return $selectedRole;
+        }
+
+        return 'administrator';
+    }
+
+    private function getSelectedUser(): ?object
+    {
+        // Verify nonce for user selection
+        $nonce = isset($_REQUEST['_wpnonce']) ? wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'simplify-admin-settings') : false;
+        
+        if (!$nonce && !wp_verify_nonce(wp_create_nonce('simplify-admin-settings'), 'simplify-admin-settings')) {
+            return null;
+        }
+
+        $selectedUserId = isset($_GET['selected_user']) 
+            ? absint($_GET['selected_user']) 
+            : null;
+
+        if ($selectedUserId) {
+            $user = get_user_by('id', $selectedUserId);
+            return $user ?: null;
+        }
+
+        return null;
     }
 } 

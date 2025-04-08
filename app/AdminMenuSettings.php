@@ -7,6 +7,7 @@ use function get_option;
 use function sanitize_title;
 use function wp_strip_all_tags;
 use function wp_get_current_user;
+use function get_user_meta;
 
 /**
  * Admin Menu Settings Class
@@ -110,8 +111,14 @@ class AdminMenuSettings
             return;
         }
 
-        $role = $currentUser->roles[0];
-        $settings = get_option('sa_menu_settings_' . $role, []);
+        // First check for user-specific settings
+        $settings = get_user_meta($currentUser->ID, 'sa_menu_settings', true);
+        
+        // If no user settings, fall back to role settings
+        if (empty($settings)) {
+            $role = $currentUser->roles[0];
+            $settings = get_option('sa_menu_settings_' . $role, []);
+        }
 
         if (empty($settings)) {
             return;

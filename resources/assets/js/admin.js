@@ -4,11 +4,16 @@ class AdminMenuManager {
     constructor() {
         this.form = document.getElementById('simplify-admin-form');
         this.roleInputs = this.form.querySelectorAll('input[name="selected_role"]');
+        this.userInputs = this.form.querySelectorAll('input[name="selected_user"]');
         this.checkboxes = this.form.querySelectorAll('input[type="checkbox"]');
         this.currentRoleSpan = document.querySelector('.sa-current-role');
         this.currentRole = this.getCheckedRole();
         this.currentRoleName = this.getCheckedRoleName();
+        this.currentUser = this.getCheckedUser();
+        this.currentUserName = this.getCheckedUserName();
         this.currentTab = this.form.dataset.currentTab;
+        this.userSearchInput = document.getElementById('sa-user-search');
+        this.loadingOverlay = document.querySelector('.sa-loading-overlay');
 
         this.init();
     }
@@ -16,18 +21,30 @@ class AdminMenuManager {
     init() {
         // Set initial active state
         const checkedRole = Array.from(this.roleInputs).find(input => input.checked);
+        const checkedUser = Array.from(this.userInputs).find(input => input.checked);
+        
         if (checkedRole) {
             checkedRole.closest('li').classList.add('active');
+        }
+        if (checkedUser) {
+            checkedUser.closest('li').classList.add('active');
         }
 
         // Initialize event listeners
         this.initializeRoleListeners();
+        this.initializeUserListeners();
         this.initializeTabListeners();
         this.initializeCheckboxes();
+        this.initializeUserSearch();
 
         // Load initial settings
-        this.loadRoleSettings(this.currentRole);
-        this.updateCurrentRoleIndicator(this.currentRoleName);
+        if (this.currentUser) {
+            this.loadSettings(null, this.currentUser);
+            this.updateCurrentRoleIndicator(this.currentUserName);
+        } else {
+            this.loadSettings(this.currentRole);
+            this.updateCurrentRoleIndicator(this.currentRoleName);
+        }
     }
 
     getCheckedRole() {
@@ -38,6 +55,16 @@ class AdminMenuManager {
     getCheckedRoleName() {
         const checkedInput = Array.from(this.roleInputs).find(input => input.checked);
         return checkedInput ? checkedInput.nextElementSibling.textContent.trim() : '';
+    }
+
+    getCheckedUser() {
+        const checkedInput = Array.from(this.userInputs).find(input => input.checked);
+        return checkedInput ? checkedInput.value : null;
+    }
+
+    getCheckedUserName() {
+        const checkedInput = Array.from(this.userInputs).find(input => input.checked);
+        return checkedInput ? checkedInput.nextElementSibling.textContent.split('(')[0].trim() : '';
     }
 
     handleParentChildCheckboxes(parentCheckbox) {
@@ -111,45 +138,69 @@ class AdminMenuManager {
         });
     }
 
-    updateCurrentRoleIndicator(roleName) {
+    updateCurrentRoleIndicator(name) {
         this.currentRoleSpan.style.opacity = '0';
         setTimeout(() => {
-            this.currentRoleSpan.textContent = `${simplifyAdmin.strings.editing} ${roleName}`;
+            this.currentRoleSpan.textContent = `${simplifyAdmin.strings.editing} ${name}`;
             this.currentRoleSpan.style.opacity = '1';
         }, 200);
     }
 
-    async loadRoleSettings(role) {
+    showLoading() {
+        if (this.loadingOverlay) {
+            this.loadingOverlay.classList.add('active');
+            this.form.classList.add('is-loading');
+        }
+    }
+
+    hideLoading() {
+        if (this.loadingOverlay) {
+            this.loadingOverlay.classList.remove('active');
+            this.form.classList.remove('is-loading');
+        }
+    }
+
+    async loadSettings(role = null, userId = null) {
+        this.showLoading();
+
         try {
+            const formData = new FormData();
+            formData.append('action', 'load_settings');
+            formData.append('nonce', simplifyAdmin.nonce);
+            formData.append('tab', this.currentTab);
+            
+            if (role) {
+                formData.append('role', role);
+            }
+            if (userId) {
+                formData.append('user_id', userId);
+            }
+            
             const response = await fetch(simplifyAdmin.ajaxurl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    action: 'load_role_settings',
-                    role: role,
-                    tab: this.currentTab,
-                    nonce: simplifyAdmin.nonce
-                })
+                body: formData,
+                credentials: 'same-origin'
             });
 
             const data = await response.json();
             
             if (data.success) {
+                if (userId && data.data.role && (!data.data.settings || Object.keys(data.data.settings).length === 0)) {
+                    return this.loadSettings(data.data.role);
+                }
+
                 const container = this.currentTab === 'menu-items'
                     ? document.querySelector('.sa-menu-items-list')
                     : document.querySelector('.sa-admin-bar-items-list');
 
-                // Reset all checkboxes
                 container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                     checkbox.checked = false;
                     checkbox.indeterminate = false;
                 });
 
-                // Update checkboxes based on saved settings
-                if (data.data) {
-                    Object.keys(data.data).forEach(key => {
+                const settings = data.data.settings || data.data;
+                if (settings) {
+                    Object.keys(settings).forEach(key => {
                         const checkbox = container.querySelector(`input[name="sa_settings[${key}]"]`);
                         if (checkbox) {
                             checkbox.checked = true;
@@ -157,43 +208,142 @@ class AdminMenuManager {
                     });
                 }
 
-                // Re-initialize checkbox behavior
                 setTimeout(() => this.initializeCheckboxes(), 0);
             }
         } catch (error) {
-            console.error('Error loading role settings:', error);
+            console.error('Error loading settings:', error);
+        } finally {
+            this.hideLoading();
         }
+    }
+
+    updateTabLinks(selectedRole = null, selectedUser = null) {
+        const tabLinks = document.querySelectorAll('.nav-tab-wrapper .nav-tab');
+        const baseUrl = window.location.href.split('?')[0];
+        const urlParams = new URLSearchParams();
+        
+        urlParams.set('page', 'simplify-admin');
+        urlParams.set('_wpnonce', simplifyAdmin.nonce);
+        
+        if (selectedUser) {
+            urlParams.set('selected_user', selectedUser);
+        } else if (selectedRole) {
+            urlParams.set('selected_role', selectedRole);
+        }
+
+        tabLinks.forEach(link => {
+            const isMenuItems = link.querySelector('.dashicons-menu-alt');
+            urlParams.set('tab', isMenuItems ? 'menu-items' : 'admin-bar');
+            link.href = `${baseUrl}?${urlParams.toString()}`;
+        });
     }
 
     initializeRoleListeners() {
         this.roleInputs.forEach(input => {
             input.addEventListener('change', () => {
-                this.currentRole = input.value;
-                this.currentRoleName = input.nextElementSibling.textContent.trim();
-                
-                this.updateCurrentRoleIndicator(this.currentRoleName);
-                this.loadRoleSettings(this.currentRole);
-                
-                // Update active class
-                document.querySelectorAll('.sa-roles-list li').forEach(li => {
-                    li.classList.remove('active');
-                });
-                input.closest('li').classList.add('active');
+                if (input.checked) {
+                    this.currentRole = input.value;
+                    this.currentRoleName = input.nextElementSibling.textContent.trim();
+                    this.currentUser = null;
+                    this.currentUserName = '';
+                    
+                    // Uncheck any selected user
+                    this.userInputs.forEach(userInput => {
+                        userInput.checked = false;
+                        userInput.closest('li').classList.remove('active');
+                    });
+                    
+                    // Update URL parameters while preserving the tab parameter
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('selected_role', this.currentRole);
+                    url.searchParams.delete('selected_user');
+                    url.searchParams.set('_wpnonce', simplifyAdmin.nonce);
+                    if (!url.searchParams.has('tab')) {
+                        url.searchParams.set('tab', this.currentTab);
+                    }
+                    window.history.pushState({}, '', url);
+                    
+                    // Update tab navigation links
+                    this.updateTabLinks(this.currentRole);
+                    
+                    this.updateCurrentRoleIndicator(this.currentRoleName);
+                    this.loadSettings(this.currentRole);
+                    
+                    // Update active class
+                    document.querySelectorAll('.sa-roles-list li').forEach(li => {
+                        li.classList.remove('active');
+                    });
+                    input.closest('li').classList.add('active');
+                }
             });
         });
+    }
+
+    initializeUserListeners() {
+        this.userInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.checked) {
+                    this.currentUser = input.value;
+                    this.currentUserName = input.nextElementSibling.textContent.split('(')[0].trim();
+                    this.currentRole = null;
+                    this.currentRoleName = '';
+                    
+                    // Uncheck any selected role
+                    this.roleInputs.forEach(roleInput => {
+                        roleInput.checked = false;
+                        roleInput.closest('li').classList.remove('active');
+                    });
+                    
+                    // Update URL parameters while preserving the tab parameter
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('selected_user', this.currentUser);
+                    url.searchParams.delete('selected_role');
+                    url.searchParams.set('_wpnonce', simplifyAdmin.nonce);
+                    if (!url.searchParams.has('tab')) {
+                        url.searchParams.set('tab', this.currentTab);
+                    }
+                    window.history.pushState({}, '', url);
+                    
+                    // Update tab navigation links
+                    this.updateTabLinks(null, this.currentUser);
+                    
+                    this.updateCurrentRoleIndicator(this.currentUserName);
+                    this.loadSettings(null, this.currentUser);
+                    
+                    // Update active class
+                    document.querySelectorAll('.sa-users-list li').forEach(li => {
+                        li.classList.remove('active');
+                    });
+                    input.closest('li').classList.add('active');
+                }
+            });
+        });
+    }
+
+    initializeUserSearch() {
+        if (this.userSearchInput) {
+            this.userSearchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const userItems = document.querySelectorAll('.sa-users-list li');
+                
+                userItems.forEach(item => {
+                    const userName = item.querySelector('span').textContent.toLowerCase();
+                    item.style.display = userName.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
     }
 
     initializeTabListeners() {
         document.querySelectorAll('.nav-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 this.currentTab = new URL(e.target.href).searchParams.get('tab');
-                this.loadRoleSettings(this.currentRole);
+                this.loadSettings(this.currentRole);
             });
         });
     }
 }
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     new AdminMenuManager();
-}); 
+});

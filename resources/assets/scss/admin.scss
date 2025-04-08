@@ -73,13 +73,20 @@
             margin-bottom: 0;
             color: v.$color-text;
             font-size: v.$font-size-lg;
+
+            &:not(:first-child) {
+                border-top: 1px solid v.$color-border;
+            }
         }
     }
 
-    &-roles-list {
+    &-roles-list,
+    &-users-list {
         margin: 0;
         padding: v.$spacing-xl;
         list-style: none;
+        max-height: 200px;
+        overflow-y: auto;
 
         li {
             margin-bottom: v.$spacing-sm;
@@ -113,6 +120,44 @@
         }
     }
 
+    &-users-list {
+        max-height: 300px;
+        overflow-y: auto;
+
+        li {
+            margin-bottom: 0;
+        }
+
+        span small {
+            color: v.$color-text-tertiary;
+            font-size: v.$font-size-sm;
+            display: block;
+        }
+    }
+
+    &-users-search {
+        padding: v.$spacing-md v.$spacing-xl;
+        border-bottom: 1px solid v.$color-border;
+        
+        input {
+            width: 100%;
+            padding: v.$spacing-sm v.$spacing-lg;
+            border: 1px solid v.$color-border;
+            border-radius: v.$border-radius-base;
+            @include m.transition;
+            
+            &:focus {
+                border-color: v.$color-secondary;
+                box-shadow: 0 0 0 1px v.$color-secondary;
+                outline: none;
+            }
+
+            &::placeholder {
+                color: v.$color-text-tertiary;
+            }
+        }
+    }
+
     &-settings-column {
         flex: 1;
         @include m.card;
@@ -120,6 +165,7 @@
 
     &-settings-content {
         padding: v.$spacing-xl;
+        position: relative;
     }
 
     &-menu-items-list,
@@ -334,5 +380,64 @@
                 display: block;
             }
         }
+    }
+}
+
+.sa-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: v.$color-white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 100;
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.sa-loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.sa-spinner-text {
+    color: v.$color-text;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.sa-spinner-circle {
+    width: 40px;
+    height: 40px;
+    border: 3px solid v.$color-secondary-light;
+    border-top-color: v.$color-secondary;
+    border-radius: 50%;
+    animation: spinner 0.8s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Disable pointer events while loading
+.simplify-admin-form.is-loading {
+    pointer-events: none;
+
+    .sa-settings-content {
+        height: 555px;
+        overflow: hidden;
     }
 }

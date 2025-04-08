@@ -7,6 +7,7 @@ use function get_option;
 use function wp_get_current_user;
 use function wp_strip_all_tags;
 use function __;
+use function get_user_meta;
 
 /**
  * Admin Bar Settings Class
@@ -193,8 +194,14 @@ class AdminBarSettings
             return;
         }
 
-        $role = reset($currentUser->roles);
-        $settings = get_option('sa_adminbar_settings_' . $role, []);
+        // First check for user-specific settings
+        $settings = get_user_meta($currentUser->ID, 'sa_adminbar_settings', true);
+        
+        // If no user settings, fall back to role settings
+        if (empty($settings)) {
+            $role = reset($currentUser->roles);
+            $settings = get_option('sa_adminbar_settings_' . $role, []);
+        }
 
         if (empty($settings)) {
             return;
