@@ -2,7 +2,7 @@ import '../scss/admin.scss';
 
 class AdminMenuManager {
     constructor() {
-        this.form = document.getElementById('simplify-admin-form');
+        this.form = document.getElementById('simplify-admin-menus-form');
         this.roleInputs = this.form.querySelectorAll('input[name="selected_role"]');
         this.userInputs = this.form.querySelectorAll('input[name="selected_user"]');
         this.checkboxes = this.form.querySelectorAll('input[type="checkbox"]');
@@ -141,7 +141,7 @@ class AdminMenuManager {
     updateCurrentRoleIndicator(name) {
         this.currentRoleSpan.style.opacity = '0';
         setTimeout(() => {
-            this.currentRoleSpan.textContent = `${simplifyAdmin.strings.editing} ${name}`;
+            this.currentRoleSpan.textContent = `${simplifyAdminMenus.strings.editing} ${name}`;
             this.currentRoleSpan.style.opacity = '1';
         }, 200);
     }
@@ -166,7 +166,7 @@ class AdminMenuManager {
         try {
             const formData = new FormData();
             formData.append('action', 'load_settings');
-            formData.append('nonce', simplifyAdmin.nonce);
+            formData.append('nonce', simplifyAdminMenus.nonce);
             formData.append('tab', this.currentTab);
             
             if (role) {
@@ -176,7 +176,7 @@ class AdminMenuManager {
                 formData.append('user_id', userId);
             }
             
-            const response = await fetch(simplifyAdmin.ajaxurl, {
+            const response = await fetch(simplifyAdminMenus.ajaxurl, {
                 method: 'POST',
                 body: formData,
                 credentials: 'same-origin'
@@ -222,8 +222,8 @@ class AdminMenuManager {
         const baseUrl = window.location.href.split('?')[0];
         const urlParams = new URLSearchParams();
         
-        urlParams.set('page', 'simplify-admin');
-        urlParams.set('_wpnonce', simplifyAdmin.nonce);
+        urlParams.set('page', 'simplify-admin-menus');
+        urlParams.set('_wpnonce', simplifyAdminMenus.nonce);
         
         if (selectedUser) {
             urlParams.set('selected_user', selectedUser);
@@ -257,7 +257,7 @@ class AdminMenuManager {
                     const url = new URL(window.location.href);
                     url.searchParams.set('selected_role', this.currentRole);
                     url.searchParams.delete('selected_user');
-                    url.searchParams.set('_wpnonce', simplifyAdmin.nonce);
+                    url.searchParams.set('_wpnonce', simplifyAdminMenus.nonce);
                     if (!url.searchParams.has('tab')) {
                         url.searchParams.set('tab', this.currentTab);
                     }
@@ -298,7 +298,7 @@ class AdminMenuManager {
                     const url = new URL(window.location.href);
                     url.searchParams.set('selected_user', this.currentUser);
                     url.searchParams.delete('selected_role');
-                    url.searchParams.set('_wpnonce', simplifyAdmin.nonce);
+                    url.searchParams.set('_wpnonce', simplifyAdminMenus.nonce);
                     if (!url.searchParams.has('tab')) {
                         url.searchParams.set('tab', this.currentTab);
                     }

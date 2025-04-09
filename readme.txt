@@ -1,4 +1,4 @@
-=== Simplify Admin ===
+=== Simplify Admin Menus ===
 Contributors: adamalexandersson
 Tags: admin, adminbar, simplify, clean, hide
 Requires at least: 5.0
@@ -12,7 +12,7 @@ Simplify your WordPress admin interface by customizing menu items and admin bar 
 
 == Description ==
 
-Simplify Admin allows you to customize and streamline your WordPress admin interface by controlling which menu items and admin bar elements are visible to different user roles. This helps create a cleaner, more focused admin experience for your users.
+Simplify Admi Menus allows you to customize and streamline your WordPress admin interface by controlling which menu items and admin bar elements are visible to different user roles. This helps create a cleaner, more focused admin experience for your users.
 
 Key Features:
 
@@ -23,21 +23,21 @@ Key Features:
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/simplify-admin` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the `/wp-content/plugins/simplify-admin-menus` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. Use the Settings->Simplify Admin screen to configure the plugin
+3. Use the Settings->Simplify Admin Menus screen to configure the plugin
 4. Configure visibility settings for each user role as needed
 
 = Development =
 
-The source code for this plugin is available on GitHub: https://github.com/adamalexandersson/simplify-admin
+The source code for this plugin is available on GitHub: https://github.com/adamalexandersson/simplify-admin-menus
 
 == Build Tools ==
 
 This plugin uses modern build tools to compile and optimize assets. To set up the development environment:
 
 1. Clone the repository:
-   `git clone https://github.com/adamalexandersson/simplify-admin.git`
+   `git clone https://github.com/adamalexandersson/simplify-admin-menus.git`
 
 2. Install dependencies:
    `npm install`

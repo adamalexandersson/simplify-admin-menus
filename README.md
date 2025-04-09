@@ -1,10 +1,10 @@
-# Simplify Admin
+# Simplify Admin Menus
 
 A WordPress plugin that provides granular control over which admin menu items and admin bar items are visible to different user roles.
 
 ## Description
 
-Simplify Admin is a powerful WordPress plugin designed to help administrators customize the WordPress admin interface by controlling the visibility of menu items based on user roles. This enhances security and provides a cleaner, more focused admin experience for different types of users.
+Simplify Admin Menus is a powerful WordPress plugin designed to help administrators customize the WordPress admin interface by controlling the visibility of menu items based on user roles. This enhances security and provides a cleaner, more focused admin experience for different types of users.
 
 ## Features
 
@@ -58,7 +58,7 @@ After building, the following files will be generated in the `dist` directory:
 
 ## Usage
 
-1. Navigate to Settings > Simplify Admin in your WordPress admin panel
+1. Navigate to Settings > Simplify Admin Menus in your WordPress admin panel
 2. Select the user role you want to configure from the dropdown menu
 3. Check/uncheck the menu items you want to hide/show for that role
 4. Save your changes
@@ -73,14 +73,14 @@ The plugin comes with support for multiple languages. Here's how to work with tr
 To update the POT (template) file when new strings are added to the plugin:
 
 ```bash
-wp i18n make-pot . resources/languages/simplify-admin.pot
+wp i18n make-pot . resources/languages/simplify-admin-menus.pot
 ```
 
 ### Adding a New Translation
 
 1. Copy the template file to create a new PO file for your language:
    ```bash
-   cp resources/languages/simplify-admin.pot resources/languages/simplify-admin-{language_code}.po
+   cp resources/languages/simplify-admin-menus.pot resources/languages/simplify-admin-menus-{language_code}.po
    ```
    Replace {language_code} with your language code (e.g., sv_SE for Swedish)
 

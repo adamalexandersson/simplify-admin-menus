@@ -1,18 +1,18 @@
 <?php
 /**
- * Plugin Name: Simplify Admin
+ * Plugin Name: Simplify Admin Menus
  * Plugin URI: 
- * Description: WordPress plugin that simplifies the admin panel menus and admin bar based on user roles.
+ * Description: WordPress plugin that simplifies the admin panel menus and admin bar for user roles or specific users.
  * Version: 1.2.2
  * Author: Adam Alexandersson
  * Author URI: 
  * License: GPL v3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain: simplify-admin
+ * Text Domain: simplify-admin-menus
  * Domain Path: /resources/languages
  */
 
-namespace SimplifyAdmin;
+namespace SimplifyAdminMenus;
 
 use function add_action;
 use function load_plugin_textdomain;
@@ -39,15 +39,15 @@ if (file_exists($autoloader)) {
     wp_die('Please run composer install to install the necessary dependencies.');
 }
 
-class SimplifyAdmin {
-    private static ?SimplifyAdmin $instance = null;
+class SimplifyAdminMenus {
+    private static ?SimplifyAdminMenus $instance = null;
     private string $pluginPath;
     private string $pluginUrl;
     private AdminMenuSettings $menuSettings;
     private AdminBarSettings $adminBarSettings;
     private AdminSettings $adminSettings;
 
-    public static function getInstance(): SimplifyAdmin {
+    public static function getInstance(): SimplifyAdminMenus {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -77,7 +77,7 @@ class SimplifyAdmin {
      */
     public function loadPluginTextdomain(): void {
         load_plugin_textdomain(
-            'simplify-admin',
+            'simplify-admin-menus',
             false,
             dirname(plugin_basename(__FILE__)) . '/resources/languages'
         );
@@ -85,4 +85,4 @@ class SimplifyAdmin {
 }
 
 // Initialize the plugin
-SimplifyAdmin::getInstance(); 
+SimplifyAdminMenus::getInstance(); 

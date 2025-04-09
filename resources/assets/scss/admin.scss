@@ -433,7 +433,7 @@
 }
 
 // Disable pointer events while loading
-.simplify-admin-form.is-loading {
+.simplify-admin-menus-form.is-loading {
     pointer-events: none;
 
     .simpad-settings-content {

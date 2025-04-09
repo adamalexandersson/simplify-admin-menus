@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplifyAdmin;
+namespace SimplifyAdminMenus;
 
 use function add_action;
 use function get_option;

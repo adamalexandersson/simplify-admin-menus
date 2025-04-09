@@ -1,12 +1,11 @@
 {
-    "name": "adamalexandersson/simplify-admin",
+    "name": "adamalexandersson/simplify-admin-menus",
     "description": "WordPress plugin that simplifies the admin panel menus and admin bar based on user roles.",
     "type": "wordpress-plugin",
     "license": "GPL-3.0-or-later",
-    "version": "1.2.2",
     "autoload": {
         "psr-4": {
-            "SimplifyAdmin\\": "app/"
+            "SimplifyAdminMenus\\": "app/"
         }
     }
 } 

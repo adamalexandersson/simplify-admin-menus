@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplifyAdmin;
+namespace SimplifyAdminMenus;
 
 use function add_action;
 use function add_options_page;
@@ -77,17 +77,17 @@ class AdminSettings
     public function addSettingsPage(): void
     {
         add_options_page(
-            __('Simplify Admin', 'simplify-admin'),
-            __('Simplify Admin', 'simplify-admin'),
+            __('Simplify Admin Menus', 'simplify-admin-menus'),
+            __('Simplify Admin Menus', 'simplify-admin-menus'),
             'manage_options',
-            'simpad-simplify-admin',
+            'simplify-admin-menus',
             [$this, 'renderSettingsPage']
         );
     }
 
     public function enqueueAdminAssets(string $hook): void
     {
-        if ('settings_page_simpad-simplify-admin' !== $hook) {
+        if ('settings_page_simplify-admin-menus' !== $hook) {
             return;
         }
 
@@ -98,18 +98,18 @@ class AdminSettings
         // Enqueue main JavaScript
         if ($adminJs) {
             wp_enqueue_script(
-                'simplify-admin',
+                'simplify-admin-menus',
                 $this->pluginUrl . 'dist/' . $adminJs,
                 [],
                 null,
                 true
             );
 
-            wp_localize_script('simplify-admin', 'simplifyAdmin', [
-                'nonce' => wp_create_nonce('simplify-admin-nonce'),
+            wp_localize_script('simplify-admin-menus', 'simplifyAdminMenus', [
+                'nonce' => wp_create_nonce('simplify-admin-menus'),
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'strings' => [
-                    'editing' => __('Editing:', 'simplify-admin')
+                    'editing' => __('Editing:', 'simplify-admin-menus')
                 ]
             ]);
         }
@@ -117,7 +117,7 @@ class AdminSettings
         // Enqueue any additional CSS from JS imports
         foreach ($adminCss as $index => $cssFile) {
             wp_enqueue_style(
-                'simplify-admin-' . $index,
+                'simplify-admin-menus-' . $index,
                 $this->pluginUrl . 'dist/' . $cssFile,
                 [],
                 null
@@ -198,7 +198,7 @@ class AdminSettings
     public function registerSettings(): void
     {
         register_setting(
-            'simplify-admin',
+            'simplify-admin-menus',
             'simpad_menu_settings',
             [
                 'sanitize_callback' => [$this, 'sanitizeMenuSettings'], 
@@ -207,7 +207,7 @@ class AdminSettings
         );
         
         register_setting(
-            'simplify-admin',
+            'simplify-admin-menus',
             'simpad_adminbar_settings',
             [
                 'sanitize_callback' => [$this, 'sanitizeMenuSettings'],
@@ -218,7 +218,7 @@ class AdminSettings
 
     public function ajaxLoadSettings(): void
     {
-        check_ajax_referer('simplify-admin-nonce', 'nonce');
+        check_ajax_referer('simplify-admin-menus', 'nonce');
 
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
@@ -267,7 +267,7 @@ class AdminSettings
         }
 
         $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
-        if (empty($nonce) || !wp_verify_nonce($nonce, 'simplify-admin-options')) {
+        if (empty($nonce) || !wp_verify_nonce($nonce, 'simplify-admin-menus')) {
             wp_die('Invalid nonce');
         }
 
@@ -303,10 +303,10 @@ class AdminSettings
 
         // Build redirect URL with all necessary parameters
         $redirectArgs = [
-            'page' => 'simpad-simplify-admin',
+            'page' => 'simplify-admin-menus',
             'tab' => $tab,
             'settings-updated' => 'true',
-            '_wpnonce' => wp_create_nonce('simplify-admin-settings-updated')
+            '_wpnonce' => wp_create_nonce('simplify-admin-menus')
         ];
 
         // Add either selected_role or selected_user parameter
@@ -359,10 +359,9 @@ class AdminSettings
             return;
         }
 
-        // Verify nonce if POST request
         if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
-            if (empty($nonce) || !wp_verify_nonce($nonce, 'simplify-admin-options')) {
+            if (empty($nonce) || !wp_verify_nonce($nonce, 'simplify-admin-menus')) {
                 wp_die('Invalid nonce');
             }
         }
@@ -370,8 +369,13 @@ class AdminSettings
         $roles = array_map('translate_user_role', wp_roles()->get_names());
         $menuItems = $this->menuSettings->getMenuItems();
         $adminBarItems = $this->adminBarSettings->getAdminBarItems();
-        $selectedRole = $this->getSelectedRole();
-        $selectedUser = $this->getSelectedUser();
+
+        $selectedRole = $this->getSelectedRole(
+            isset($_GET['selected_role']) ? sanitize_text_field(wp_unslash($_GET['selected_role'])) : null
+        );
+        $selectedUser = $this->getSelectedUser(
+            isset($_GET['selected_user']) ? absint($_GET['selected_user']) : null
+        );
         
         $users = get_users([
             'orderby' => 'display_name',
@@ -390,26 +394,10 @@ class AdminSettings
             }
         }
 
-        $currentRole = isset($_POST['selected_role']) 
-            ? sanitize_text_field(wp_unslash($_POST['selected_role'])) 
-            : $this->getCurrentRole();
         $currentTab = isset($_GET['tab']) 
             ? sanitize_text_field(wp_unslash($_GET['tab'])) 
             : 'menu-items';
         
-        if ($currentTab === 'menu-items') {
-            if ($currentUser) {
-                $settings = get_user_meta($currentUser->ID, 'simpad_menu_settings', true) ?: [];
-            } else {
-                $settings = get_option('simpad_menu_settings_' . $currentRole, []);
-            }
-        } else {
-            if ($currentUser) {
-                $settings = get_user_meta($currentUser->ID, 'simpad_adminbar_settings', true) ?: [];
-            } else {
-                $settings = get_option('simpad_adminbar_settings_' . $currentRole, []);
-            }
-        }
 
         include $this->pluginPath . 'resources/views/settings-page.php';
     }
@@ -420,34 +408,23 @@ class AdminSettings
         
         if (isset($_GET['_wpnonce'])) {
             $nonce = sanitize_text_field(wp_unslash($_GET['_wpnonce']));
-            if (!wp_verify_nonce($nonce, 'simplify-admin-settings-updated')) {
+            if (!wp_verify_nonce($nonce, 'simplify-admin-menus')) {
                 return;
             }
         }
 
-        if ($screen->id === 'settings_page_simplify-admin' 
+        if ($screen->id === 'settings_page_simplify-admin-menus' 
             && isset($_GET['settings-updated']) 
             && sanitize_text_field(wp_unslash($_GET['settings-updated'])) === 'true'
         ) {
             echo '<div class="notice notice-success is-dismissible"><p>' 
-                . esc_html__('Settings saved successfully!', 'simplify-admin') 
+                . esc_html__('Settings saved successfully!', 'simplify-admin-menus') 
                 . '</p></div>';
         }
     }
 
-    private function getSelectedRole(): ?string
+    private function getSelectedRole(?string $selectedRole = null): string 
     {
-        // Verify nonce for role selection
-        $nonce = isset($_REQUEST['_wpnonce']) ? wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'simplify-admin-settings') : false;
-        
-        if (!$nonce && !wp_verify_nonce(wp_create_nonce('simplify-admin-settings'), 'simplify-admin-settings')) {
-            return 'administrator';
-        }
-
-        $selectedRole = isset($_GET['selected_role']) 
-            ? sanitize_text_field(wp_unslash($_GET['selected_role'])) 
-            : null;
-
         if ($selectedRole && array_key_exists($selectedRole, wp_roles()->get_names())) {
             return $selectedRole;
         }
@@ -455,24 +432,13 @@ class AdminSettings
         return 'administrator';
     }
 
-    private function getSelectedUser(): ?object
+    private function getSelectedUser(?int $selectedUserId = null): ?object 
     {
-        // Verify nonce for user selection
-        $nonce = isset($_REQUEST['_wpnonce']) ? wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'simplify-admin-settings') : false;
-        
-        if (!$nonce && !wp_verify_nonce(wp_create_nonce('simplify-admin-settings'), 'simplify-admin-settings')) {
-            return null;
-        }
-
-        $selectedUserId = isset($_GET['selected_user']) 
-            ? absint($_GET['selected_user']) 
-            : null;
-
         if ($selectedUserId) {
             $user = get_user_by('id', $selectedUserId);
             return $user ?: null;
         }
-
+        
         return null;
     }
 } 

@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Simplify Admin 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simplify-admin\n"
-"POT-Creation-Date: 2025-04-08T15:01:02+00:00\n"
-"PO-Revision-Date: 2025-04-08 17:01+0200\n"
+"POT-Creation-Date: 2025-04-09T08:34:12+00:00\n"
+"PO-Revision-Date: 2025-04-09 10:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -13,24 +13,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.5\n"
-"X-Domain: simplify-admin\n"
+"X-Domain: simplify-admin-menus\n"
 
 #. Plugin Name of the plugin
-#: simplify-admin.php app/AdminSettings.php:83 app/AdminSettings.php:84
-msgid "Simplify Admin"
-msgstr "Förenkla admingränssnitt"
+#: simplify-admin-menus.php app/AdminSettings.php:80 app/AdminSettings.php:81
+msgid "Simplify Admin Menus"
+msgstr "Förenkla admin menyer"
 
 #. Description of the plugin
-#: simplify-admin.php
+#: simplify-admin-menus.php
 msgid ""
-"WordPress plugin that simplifies the admin panel menus and admin bar based "
-"on user roles."
+"WordPress plugin that simplifies the admin panel menus and admin bar for "
+"user roles or specific users."
 msgstr ""
-"WordPress-plugin som förenklar adminpanelens menyer och adminfältet baserat "
-"på användarroller."
+"WordPress-plugin som förenklar adminpanelens menyer och adminfältet för "
+"användarroller eller specifika användare."
 
 #. Author of the plugin
-#: simplify-admin.php
+#: simplify-admin-menus.php
 msgid "Adam Alexandersson"
 msgstr "Adam Alexandersson"
 
@@ -50,11 +50,11 @@ msgstr "Mitt konto"
 msgid "Litespeed Menu"
 msgstr "Litespeed Meny"
 
-#: app/AdminSettings.php:115
+#: app/AdminSettings.php:112
 msgid "Editing:"
 msgstr "Redigering:"
 
-#: app/AdminSettings.php:413
+#: app/AdminSettings.php:433
 msgid "Settings saved successfully!"
 msgstr "Inställningarna har sparats!"
 
@@ -70,36 +70,36 @@ msgstr "Användare"
 msgid "Search users..."
 msgstr "Sök användare…"
 
-#: resources/views/settings-page.php:92 resources/views/settings-page.php:106
+#: resources/views/settings-page.php:93 resources/views/settings-page.php:107
 msgid "Menu Items"
 msgstr "Sidomeny"
 
-#: resources/views/settings-page.php:97 resources/views/settings-page.php:108
+#: resources/views/settings-page.php:98 resources/views/settings-page.php:109
 msgid "Admin Bar"
 msgstr "Adminfält"
 
 #. translators: %s: User display name
-#: resources/views/settings-page.php:116
+#: resources/views/settings-page.php:117
 msgid "Editing user: %s"
 msgstr "Redigerar användare: %s"
 
 #. translators: %s: User role name
-#: resources/views/settings-page.php:119
+#: resources/views/settings-page.php:120
 msgid "Editing role: %s"
 msgstr "Redigerar roll: %s"
 
-#: resources/views/settings-page.php:125
+#: resources/views/settings-page.php:126
 msgid "Choose which items to hide"
 msgstr "Välj vilka alternativ som ska döljas"
 
-#: resources/views/settings-page.php:131
+#: resources/views/settings-page.php:132
 msgid "Loading settings..."
 msgstr "Laddar inställningar…"
 
-#: resources/views/settings-page.php:187
+#: resources/views/settings-page.php:188
 msgid "No admin bar items found."
 msgstr "Inget adminrad objekt hittades."
 
-#: resources/views/settings-page.php:200
+#: resources/views/settings-page.php:201
 msgid "Save Settings"
 msgstr "Spara inställningar"

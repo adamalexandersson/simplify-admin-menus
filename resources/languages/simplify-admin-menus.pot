@@ -2,32 +2,32 @@
 # This file is distributed under the GPL v3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simplify Admin 1.2.2\n"
+"Project-Id-Version: Simplify Admin Menus 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simplify-admin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-08T15:01:02+00:00\n"
+"POT-Creation-Date: 2025-04-09T08:34:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
-"X-Domain: simplify-admin\n"
+"X-Domain: simplify-admin-menus\n"
 
 #. Plugin Name of the plugin
-#: simplify-admin.php
-#: app/AdminSettings.php:83
-#: app/AdminSettings.php:84
-msgid "Simplify Admin"
+#: simplify-admin-menus.php
+#: app/AdminSettings.php:80
+#: app/AdminSettings.php:81
+msgid "Simplify Admin Menus"
 msgstr ""
 
 #. Description of the plugin
-#: simplify-admin.php
-msgid "WordPress plugin that simplifies the admin panel menus and admin bar based on user roles."
+#: simplify-admin-menus.php
+msgid "WordPress plugin that simplifies the admin panel menus and admin bar for user roles or specific users."
 msgstr ""
 
 #. Author of the plugin
-#: simplify-admin.php
+#: simplify-admin-menus.php
 msgid "Adam Alexandersson"
 msgstr ""
 
@@ -47,11 +47,11 @@ msgstr ""
 msgid "Litespeed Menu"
 msgstr ""
 
-#: app/AdminSettings.php:115
+#: app/AdminSettings.php:112
 msgid "Editing:"
 msgstr ""
 
-#: app/AdminSettings.php:413
+#: app/AdminSettings.php:433
 msgid "Settings saved successfully!"
 msgstr ""
 
@@ -67,38 +67,38 @@ msgstr ""
 msgid "Search users..."
 msgstr ""
 
-#: resources/views/settings-page.php:92
-#: resources/views/settings-page.php:106
+#: resources/views/settings-page.php:93
+#: resources/views/settings-page.php:107
 msgid "Menu Items"
 msgstr ""
 
-#: resources/views/settings-page.php:97
-#: resources/views/settings-page.php:108
+#: resources/views/settings-page.php:98
+#: resources/views/settings-page.php:109
 msgid "Admin Bar"
 msgstr ""
 
 #. translators: %s: User display name
-#: resources/views/settings-page.php:116
+#: resources/views/settings-page.php:117
 msgid "Editing user: %s"
 msgstr ""
 
 #. translators: %s: User role name
-#: resources/views/settings-page.php:119
+#: resources/views/settings-page.php:120
 msgid "Editing role: %s"
 msgstr ""
 
-#: resources/views/settings-page.php:125
+#: resources/views/settings-page.php:126
 msgid "Choose which items to hide"
 msgstr ""
 
-#: resources/views/settings-page.php:131
+#: resources/views/settings-page.php:132
 msgid "Loading settings..."
 msgstr ""
 
-#: resources/views/settings-page.php:187
+#: resources/views/settings-page.php:188
 msgid "No admin bar items found."
 msgstr ""
 
-#: resources/views/settings-page.php:200
+#: resources/views/settings-page.php:201
 msgid "Save Settings"
 msgstr ""

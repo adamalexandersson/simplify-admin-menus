@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplifyAdmin;
+namespace SimplifyAdminMenus;
 
 use function add_action;
 use function get_option;
@@ -36,10 +36,10 @@ class AdminBarSettings
     public function setTitleMap()
     {
         $this->titleMap = [
-            'updates' => __('Updates', 'simplify-admin'),
-            'comments' => __('Comments', 'simplify-admin'),
-            'my-account' => __('My account', 'simplify-admin'),
-            'litespeed-menu' => __('Litespeed Menu', 'simplify-admin')
+            'updates' => __('Updates', 'simplify-admin-menus'),
+            'comments' => __('Comments', 'simplify-admin-menus'),
+            'my-account' => __('My account', 'simplify-admin-menus'),
+            'litespeed-menu' => __('Litespeed Menu', 'simplify-admin-menus')
         ];
     }
 

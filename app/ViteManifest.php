@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplifyAdmin;
+namespace SimplifyAdminMenus;
 
 class ViteManifest
 {
