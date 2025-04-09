@@ -135,3 +135,8 @@ Created by Adam Alexandersson
 
 ### 1.2.2
 - Improved security and code quality for WordPress plugin repository
+
+### 1.3.0
+- Added support for user specific settings 
+- Improved security and code quality for WordPress plugin repository
+- Renamed plugin to Simplify Admin Menus
