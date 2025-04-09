@@ -1,7 +1,7 @@
 @use 'variables' as v;
 @use 'mixins' as m;
 
-.sa {
+.simpad {
     $parent: &;
 
     &-container {
@@ -280,7 +280,7 @@
 }
 
 // Content Header Styles
-.sa-content-header {
+.simpad-content-header {
     margin-bottom: v.$spacing-2xl;
     padding-bottom: v.$spacing-base;
     border-bottom: 1px solid v.$color-border;
@@ -308,7 +308,7 @@
 }
 
 // Form Controls
-.sa-container {
+.simpad-container {
     input[type="checkbox"] {
         @include m.checkbox-base;
         border-radius: v.$border-radius-sm;
@@ -383,7 +383,7 @@
     }
 }
 
-.sa-loading-overlay {
+.simpad-loading-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -404,20 +404,20 @@
     }
 }
 
-.sa-loading-spinner {
+.simpad-loading-spinner {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
 }
 
-.sa-spinner-text {
+.simpad-spinner-text {
     color: v.$color-text;
     font-size: 14px;
     font-weight: 500;
 }
 
-.sa-spinner-circle {
+.simpad-spinner-circle {
     width: 40px;
     height: 40px;
     border: 3px solid v.$color-secondary-light;
@@ -436,7 +436,7 @@
 .simplify-admin-form.is-loading {
     pointer-events: none;
 
-    .sa-settings-content {
+    .simpad-settings-content {
         height: 555px;
         overflow: hidden;
     }

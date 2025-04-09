@@ -32,13 +32,13 @@ use function printf;
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="simplify-admin-form" class="simplify-admin-form" data-current-tab="<?php echo esc_attr($currentTab); ?>">
-        <input type="hidden" name="action" value="save_sa_settings">
+        <input type="hidden" name="action" value="save_simpad_settings">
         <input type="hidden" name="tab" value="<?php echo esc_attr($currentTab); ?>">
         <?php wp_nonce_field('simplify-admin-options'); ?>
-        <div class="sa-container">
-            <div class="sa-roles-column">
+        <div class="simpad-container">
+            <div class="simpad-roles-column">
                 <h2><?php esc_html_e('User Roles', 'simplify-admin'); ?></h2>
-                <ul class="sa-roles-list">
+                <ul class="simpad-roles-list">
                     <?php foreach ($roles as $role_slug => $role_name) : ?>
                         <li>
                             <label>
@@ -50,10 +50,10 @@ use function printf;
                 </ul>
 
                 <h2><?php esc_html_e('Users', 'simplify-admin'); ?></h2>
-                <div class="sa-users-search">
-                    <input type="text" id="sa-user-search" placeholder="<?php esc_attr_e('Search users...', 'simplify-admin'); ?>">
+                <div class="simpad-users-search">
+                    <input type="text" id="simpad-user-search" placeholder="<?php esc_attr_e('Search users...', 'simplify-admin'); ?>">
                 </div>
-                <ul class="sa-users-list">
+                <ul class="simpad-users-list">
                     <?php foreach ($users as $user) : ?>
                         <li>
                             <label>
@@ -72,8 +72,8 @@ use function printf;
                     <?php endforeach; ?>
                 </ul>
             </div>
-            <div class="sa-content-wrapper">
-                <div class="sa-settings-column">
+            <div class="simpad-content-wrapper">
+                <div class="simpad-settings-column">
                     <nav class="nav-tab-wrapper">
                         <?php
                             $tabUrlArgs = [
@@ -98,10 +98,10 @@ use function printf;
                             <?php esc_html_e('Admin Bar', 'simplify-admin'); ?>
                         </a>
                     </nav>
-                    <div class="sa-settings-content">
-                        <div class="sa-content-header">
-                            <div class="sa-content-header-top">
-                                <h2 class="sa-content-header-title">
+                    <div class="simpad-settings-content">
+                        <div class="simpad-content-header">
+                            <div class="simpad-content-header-top">
+                                <h2 class="simpad-content-header-title">
                                     <?php 
                                         if ($currentTab === 'menu-items') {
                                             esc_html_e('Menu Items', 'simplify-admin');
@@ -110,7 +110,7 @@ use function printf;
                                         }
                                     ?>
                                 </h2>
-                                <span class="sa-current-role">
+                                <span class="simpad-current-role">
                                     <?php 
                                         if ($selectedUser) {
                                             /* translators: %s: User display name */
@@ -123,34 +123,34 @@ use function printf;
                                 </span>
                             </div>
 
-                            <p class="sa-content-header-description"><?php esc_html_e('Choose which items to hide', 'simplify-admin'); ?></p>
+                            <p class="simpad-content-header-description"><?php esc_html_e('Choose which items to hide', 'simplify-admin'); ?></p>
                         </div>
 
-                        <div class="sa-loading-overlay">
-                            <div class="sa-loading-spinner">
-                                <div class="sa-spinner-circle"></div>
-                                <div class="sa-spinner-text"><?php esc_html_e('Loading settings...', 'simplify-admin'); ?></div>
+                        <div class="simpad-loading-overlay">
+                            <div class="simpad-loading-spinner">
+                                <div class="simpad-spinner-circle"></div>
+                                <div class="simpad-spinner-text"><?php esc_html_e('Loading settings...', 'simplify-admin'); ?></div>
                             </div>
                         </div>
 
                         <?php if ($currentTab === 'menu-items'): ?>
-                            <div class="sa-menu-items-list">
+                            <div class="simpad-menu-items-list">
                                 <?php foreach ($menuItems as $menu_item) : ?>
                                     <?php if(isset($menu_item['title']) && $menu_item['title']): ?>
-                                        <div class="sa-menu-item">
+                                        <div class="simpad-menu-item">
                                             <label>
                                                 <input type="checkbox" 
-                                                       name="sa_settings[<?php echo esc_attr($menu_item['id']); ?>]" 
+                                                       name="simpad_settings[<?php echo esc_attr($menu_item['id']); ?>]" 
                                                        <?php checked(isset($settings[$menu_item['id']])); ?>>
                                                 <?php echo esc_html($menu_item['title']); ?>
                                             </label>
                                             
                                             <?php if (!empty($menu_item['submenu'])) : ?>
-                                                <div class="sa-submenu-items">
+                                                <div class="simpad-submenu-items">
                                                     <?php foreach ($menu_item['submenu'] as $submenu_item) : ?>
                                                         <label>
                                                             <input type="checkbox" 
-                                                                   name="sa_settings[<?php echo esc_attr($submenu_item['id']); ?>]" 
+                                                                   name="simpad_settings[<?php echo esc_attr($submenu_item['id']); ?>]" 
                                                                    <?php checked(isset($settings[$submenu_item['id']])); ?>>
                                                             <?php echo esc_html($submenu_item['title']); ?>
                                                         </label>
@@ -162,19 +162,19 @@ use function printf;
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>
-                            <div class="sa-admin-bar-items-list">
+                            <div class="simpad-admin-bar-items-list">
                                 <?php 
                                 function renderAdminBarItem($item, $settings) {
                                     ?>
-                                    <div class="sa-menu-item">
+                                    <div class="simpad-menu-item">
                                         <label>
                                             <input type="checkbox" 
-                                                   name="sa_settings[<?php echo esc_attr($item['id']); ?>]" 
+                                                   name="simpad_settings[<?php echo esc_attr($item['id']); ?>]" 
                                                    <?php checked(isset($settings[$item['id']])); ?>>
                                             <?php echo wp_kses_post($item['title']); ?>
                                         </label>
                                         <?php if (!empty($item['children'])): ?>
-                                            <div class="sa-submenu-items">
+                                            <div class="simpad-submenu-items">
                                                 <?php foreach ($item['children'] as $child): ?>
                                                     <?php renderAdminBarItem($child, $settings); ?>
                                                 <?php endforeach; ?>
@@ -197,7 +197,7 @@ use function printf;
                     </div>
                 </div>
 
-                <div class="sa-save-box">
+                <div class="simpad-save-box">
                     <?php submit_button(esc_html__('Save Settings', 'simplify-admin'), 'primary', 'submit', false); ?>
                 </div>
             </div>

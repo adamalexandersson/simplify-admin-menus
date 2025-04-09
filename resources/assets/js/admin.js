@@ -6,14 +6,14 @@ class AdminMenuManager {
         this.roleInputs = this.form.querySelectorAll('input[name="selected_role"]');
         this.userInputs = this.form.querySelectorAll('input[name="selected_user"]');
         this.checkboxes = this.form.querySelectorAll('input[type="checkbox"]');
-        this.currentRoleSpan = document.querySelector('.sa-current-role');
+        this.currentRoleSpan = document.querySelector('.simpad-current-role');
         this.currentRole = this.getCheckedRole();
         this.currentRoleName = this.getCheckedRoleName();
         this.currentUser = this.getCheckedUser();
         this.currentUserName = this.getCheckedUserName();
         this.currentTab = this.form.dataset.currentTab;
-        this.userSearchInput = document.getElementById('sa-user-search');
-        this.loadingOverlay = document.querySelector('.sa-loading-overlay');
+        this.userSearchInput = document.getElementById('simpad-user-search');
+        this.loadingOverlay = document.querySelector('.simpad-loading-overlay');
 
         this.init();
     }
@@ -68,8 +68,8 @@ class AdminMenuManager {
     }
 
     handleParentChildCheckboxes(parentCheckbox) {
-        const parentMenuItem = parentCheckbox.closest('.sa-menu-item');
-        const submenuContainer = parentMenuItem.querySelector('.sa-submenu-items');
+        const parentMenuItem = parentCheckbox.closest('.simpad-menu-item');
+        const submenuContainer = parentMenuItem.querySelector('.simpad-submenu-items');
         if (!submenuContainer) return;
 
         const allSubmenuItems = submenuContainer.querySelectorAll('input[type="checkbox"]');
@@ -77,7 +77,7 @@ class AdminMenuManager {
 
         const immediateChildren = this.currentTab === 'menu-items'
             ? submenuContainer.querySelectorAll(':scope > label > input[type="checkbox"]')
-            : submenuContainer.querySelectorAll(':scope > .sa-menu-item > label > input[type="checkbox"]');
+            : submenuContainer.querySelectorAll(':scope > .simpad-menu-item > label > input[type="checkbox"]');
 
         // Parent checkbox change handler
         parentCheckbox.addEventListener('change', () => {
@@ -92,13 +92,13 @@ class AdminMenuManager {
                 this.updateParentCheckboxState(parentCheckbox, immediateChildren);
                 
                 // Update grandparent if exists
-                const grandparentCheckbox = parentMenuItem.closest('.sa-submenu-items')
-                    ?.closest('.sa-menu-item')
+                const grandparentCheckbox = parentMenuItem.closest('.simpad-submenu-items')
+                    ?.closest('.simpad-menu-item')
                     ?.querySelector('label > input[type="checkbox"]');
                     
                 if (grandparentCheckbox) {
-                    const parentSiblings = grandparentCheckbox.closest('.sa-menu-item')
-                        .querySelector('.sa-submenu-items')
+                    const parentSiblings = grandparentCheckbox.closest('.simpad-menu-item')
+                        .querySelector('.simpad-submenu-items')
                         .querySelectorAll(':scope > label > input[type="checkbox"]');
                     this.updateParentCheckboxState(grandparentCheckbox, parentSiblings);
                 }
@@ -127,10 +127,10 @@ class AdminMenuManager {
 
     initializeCheckboxes() {
         const selector = this.currentTab === 'admin-bar' 
-            ? '.sa-admin-bar-items-list' 
-            : '.sa-menu-items-list';
+            ? '.simpad-admin-bar-items-list' 
+            : '.simpad-menu-items-list';
             
-        document.querySelectorAll(`${selector} .sa-menu-item`).forEach(item => {
+        document.querySelectorAll(`${selector} .simpad-menu-item`).forEach(item => {
             const checkbox = item.querySelector('label > input[type="checkbox"]');
             if (checkbox) {
                 this.handleParentChildCheckboxes(checkbox);
@@ -190,8 +190,8 @@ class AdminMenuManager {
                 }
 
                 const container = this.currentTab === 'menu-items'
-                    ? document.querySelector('.sa-menu-items-list')
-                    : document.querySelector('.sa-admin-bar-items-list');
+                    ? document.querySelector('.simpad-menu-items-list')
+                    : document.querySelector('.simpad-admin-bar-items-list');
 
                 container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                     checkbox.checked = false;
@@ -201,7 +201,7 @@ class AdminMenuManager {
                 const settings = data.data.settings || data.data;
                 if (settings) {
                     Object.keys(settings).forEach(key => {
-                        const checkbox = container.querySelector(`input[name="sa_settings[${key}]"]`);
+                        const checkbox = container.querySelector(`input[name="simpad_settings[${key}]"]`);
                         if (checkbox) {
                             checkbox.checked = true;
                         }
@@ -270,7 +270,7 @@ class AdminMenuManager {
                     this.loadSettings(this.currentRole);
                     
                     // Update active class
-                    document.querySelectorAll('.sa-roles-list li').forEach(li => {
+                    document.querySelectorAll('.simpad-roles-list li').forEach(li => {
                         li.classList.remove('active');
                     });
                     input.closest('li').classList.add('active');
@@ -311,7 +311,7 @@ class AdminMenuManager {
                     this.loadSettings(null, this.currentUser);
                     
                     // Update active class
-                    document.querySelectorAll('.sa-users-list li').forEach(li => {
+                    document.querySelectorAll('.simpad-users-list li').forEach(li => {
                         li.classList.remove('active');
                     });
                     input.closest('li').classList.add('active');
@@ -324,7 +324,7 @@ class AdminMenuManager {
         if (this.userSearchInput) {
             this.userSearchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
-                const userItems = document.querySelectorAll('.sa-users-list li');
+                const userItems = document.querySelectorAll('.simpad-users-list li');
                 
                 userItems.forEach(item => {
                     const userName = item.querySelector('span').textContent.toLowerCase();

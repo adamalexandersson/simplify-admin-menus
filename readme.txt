@@ -2,7 +2,7 @@
 Contributors: adamalexandersson
 Tags: admin, adminbar, simplify, clean, hide
 Requires at least: 5.0
-Tested up to: 6.7.2
+Tested up to: 6.7
 Stable tag: 1.2.2
 Requires PHP: 7.4
 License: GPLv3 or later
@@ -27,6 +27,30 @@ Key Features:
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Use the Settings->Simplify Admin screen to configure the plugin
 4. Configure visibility settings for each user role as needed
+
+= Development =
+
+The source code for this plugin is available on GitHub: https://github.com/adamalexandersson/simplify-admin
+
+== Build Tools ==
+
+This plugin uses modern build tools to compile and optimize assets. To set up the development environment:
+
+1. Clone the repository:
+   `git clone https://github.com/adamalexandersson/simplify-admin.git`
+
+2. Install dependencies:
+   `npm install`
+
+3. Available build commands:
+   * `npm run build` - Build production assets
+   * `npm run dev` - Start development server with hot reloading
+   * `composer install` - Install PHP dependencies
+
+The plugin uses:
+* Vite for asset bundling and development server
+* SCSS for styling
+* Composer for PHP dependency management and PSR-4 autoloading
 
 == Frequently Asked Questions ==
 

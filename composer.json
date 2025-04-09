@@ -8,10 +8,5 @@
         "psr-4": {
             "SimplifyAdmin\\": "app/"
         }
-    },
-    "authors": [
-        {
-            "name": "Alingsås Municipality"
-        }
-    ]
+    }
 } 

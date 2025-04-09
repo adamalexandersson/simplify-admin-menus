@@ -6,13 +6,11 @@ use function add_action;
 use function add_options_page;
 use function admin_url;
 use function add_query_arg;
-use function check_admin_referer;
 use function check_ajax_referer;
 use function current_user_can;
 use function esc_html__;
 use function get_current_screen;
 use function get_option;
-use function plugin_basename;
 use function register_setting;
 use function sanitize_text_field;
 use function update_option;
@@ -29,7 +27,6 @@ use function wp_send_json_success;
 use function wp_add_inline_style;
 use function get_user_option;
 use function __;
-use function translate_user_role;
 use function wp_unslash;
 use function is_array;
 use function get_users;
@@ -72,7 +69,7 @@ class AdminSettings
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
         add_action('admin_enqueue_scripts', [$this, 'setAdminProfileColors']);
         add_action('admin_init', [$this, 'registerSettings']);
-        add_action('admin_post_save_sa_settings', [$this, 'handleFormSubmission']);
+        add_action('admin_post_save_simpad_settings', [$this, 'handleFormSubmission']);
         add_action('wp_ajax_load_settings', [$this, 'ajaxLoadSettings']);
         add_action('admin_notices', [$this, 'displaySettingsUpdatedNotice']);
     }
@@ -83,14 +80,14 @@ class AdminSettings
             __('Simplify Admin', 'simplify-admin'),
             __('Simplify Admin', 'simplify-admin'),
             'manage_options',
-            'simplify-admin',
+            'simpad-simplify-admin',
             [$this, 'renderSettingsPage']
         );
     }
 
     public function enqueueAdminAssets(string $hook): void
     {
-        if ('settings_page_simplify-admin' !== $hook) {
+        if ('settings_page_simpad-simplify-admin' !== $hook) {
             return;
         }
 
@@ -144,23 +141,45 @@ class AdminSettings
         $primary_color = $color_count === 4 ? $colors[2] : $colors[1];
         $secondary_color = $color_count === 4 ? $colors[1] : $colors[2];
     
-        $css_vars = ':root {';
+        $css_vars = array();
         
-        $css_vars .= "--wp-admin-color-primary: {$primary_color};";
-        $css_vars .= "--wp-admin-color-secondary: {$secondary_color};";
+        array_push($css_vars, sprintf(
+            '--wp-admin-color-primary: %s',
+            esc_attr($primary_color)
+        ));
+        array_push($css_vars, sprintf(
+            '--wp-admin-color-secondary: %s',
+            esc_attr($secondary_color)
+        ));
         
-        $css_vars .= "--wp-admin-color-primary-light: color-mix(in srgb, {$primary_color} 10%, transparent);";
-        $css_vars .= "--wp-admin-color-primary-border: color-mix(in srgb, {$primary_color} 20%, transparent);";
-        $css_vars .= "--wp-admin-color-secondary-light: color-mix(in srgb, {$secondary_color} 10%, transparent);";
-        $css_vars .= "--wp-admin-color-secondary-border: color-mix(in srgb, {$secondary_color} 20%, transparent);";
+        array_push($css_vars, sprintf(
+            '--wp-admin-color-primary-light: color-mix(in srgb, %s 10%%, transparent)',
+            esc_attr($primary_color)
+        ));
+        array_push($css_vars, sprintf(
+            '--wp-admin-color-primary-border: color-mix(in srgb, %s 20%%, transparent)',
+            esc_attr($primary_color)
+        ));
+        array_push($css_vars, sprintf(
+            '--wp-admin-color-secondary-light: color-mix(in srgb, %s 10%%, transparent)',
+            esc_attr($secondary_color)
+        ));
+        array_push($css_vars, sprintf(
+            '--wp-admin-color-secondary-border: color-mix(in srgb, %s 20%%, transparent)',
+            esc_attr($secondary_color)
+        ));
         
         foreach ($colors as $index => $color) {
-            $css_vars .= "--wp-admin-color-{$index}: {$color};";
+            array_push($css_vars, sprintf(
+                '--wp-admin-color-%d: %s',
+                (int) $index,
+                esc_attr($color)
+            ));
         }
         
-        $css_vars .= '}';
+        $css_output = ':root {' . implode(';', array_map('esc_html', $css_vars)) . '}';
     
-        wp_add_inline_style('wp-admin', $css_vars);
+        wp_add_inline_style('wp-admin', $css_output);
     }
 
     public function sanitizeMenuSettings($input)
@@ -180,7 +199,7 @@ class AdminSettings
     {
         register_setting(
             'simplify-admin',
-            'sa_menu_settings',
+            'simpad_menu_settings',
             [
                 'sanitize_callback' => [$this, 'sanitizeMenuSettings'], 
                 'default' => []
@@ -189,7 +208,7 @@ class AdminSettings
         
         register_setting(
             'simplify-admin',
-            'sa_adminbar_settings',
+            'simpad_adminbar_settings',
             [
                 'sanitize_callback' => [$this, 'sanitizeMenuSettings'],
                 'default' => []
@@ -216,9 +235,9 @@ class AdminSettings
         
         if ($userId) {
             if ($tab === 'menu-items') {
-                $settings = get_user_meta($userId, 'sa_menu_settings', true) ?: [];
+                $settings = get_user_meta($userId, 'simpad_menu_settings', true) ?: [];
             } else {
-                $settings = get_user_meta($userId, 'sa_adminbar_settings', true) ?: [];
+                $settings = get_user_meta($userId, 'simpad_adminbar_settings', true) ?: [];
             }
 
             $user = get_user_by('id', $userId);
@@ -230,9 +249,9 @@ class AdminSettings
             ]);
         } else {
             if ($tab === 'menu-items') {
-                $settings = get_option('sa_menu_settings_' . $role, []);
+                $settings = get_option('simpad_menu_settings_' . $role, []);
             } else {
-                $settings = get_option('sa_adminbar_settings_' . $role, []);
+                $settings = get_option('simpad_adminbar_settings_' . $role, []);
             }
 
             wp_send_json_success([
@@ -247,7 +266,6 @@ class AdminSettings
             wp_die('Insufficient permissions');
         }
 
-        // Verify nonce
         $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
         if (empty($nonce) || !wp_verify_nonce($nonce, 'simplify-admin-options')) {
             wp_die('Invalid nonce');
@@ -263,7 +281,7 @@ class AdminSettings
         $tab = isset($_POST['tab']) ? sanitize_text_field(wp_unslash($_POST['tab'])) : 'menu-items';
         $settings = [];
 
-        $postSettings = array_map('sanitize_text_field', isset($_POST['sa_settings']) ? wp_unslash($_POST['sa_settings']) : []);
+        $postSettings = array_map('sanitize_text_field', isset($_POST['simpad_settings']) ? wp_unslash($_POST['simpad_settings']) : []);
 
         if (isset($postSettings) && is_array($postSettings)) {
             foreach ($postSettings as $key => $value) {
@@ -285,7 +303,7 @@ class AdminSettings
 
         // Build redirect URL with all necessary parameters
         $redirectArgs = [
-            'page' => 'simplify-admin',
+            'page' => 'simpad-simplify-admin',
             'tab' => $tab,
             'settings-updated' => 'true',
             '_wpnonce' => wp_create_nonce('simplify-admin-settings-updated')
@@ -304,7 +322,7 @@ class AdminSettings
 
     private function getSettingsKey(string $tab): string
     {
-        return $tab === 'menu-items' ? 'sa_menu_settings' : 'sa_adminbar_settings';
+        return $tab === 'menu-items' ? 'simpad_menu_settings' : 'simpad_adminbar_settings';
     }
 
     private function handleUserSettings(int $userId, string $key, array $settings): void
@@ -359,7 +377,9 @@ class AdminSettings
             'orderby' => 'display_name',
             'order' => 'ASC'
         ]);
+
         $currentUser = null;
+
         if (isset($_REQUEST['selected_user'])) {
             $userId = absint($_REQUEST['selected_user']);
             foreach ($users as $user) {
@@ -379,15 +399,15 @@ class AdminSettings
         
         if ($currentTab === 'menu-items') {
             if ($currentUser) {
-                $settings = get_user_meta($currentUser->ID, 'sa_menu_settings', true) ?: [];
+                $settings = get_user_meta($currentUser->ID, 'simpad_menu_settings', true) ?: [];
             } else {
-                $settings = get_option('sa_menu_settings_' . $currentRole, []);
+                $settings = get_option('simpad_menu_settings_' . $currentRole, []);
             }
         } else {
             if ($currentUser) {
-                $settings = get_user_meta($currentUser->ID, 'sa_adminbar_settings', true) ?: [];
+                $settings = get_user_meta($currentUser->ID, 'simpad_adminbar_settings', true) ?: [];
             } else {
-                $settings = get_option('sa_adminbar_settings_' . $currentRole, []);
+                $settings = get_option('simpad_adminbar_settings_' . $currentRole, []);
             }
         }
 

@@ -59,7 +59,7 @@ class SimplifyAdmin {
         $this->pluginUrl = plugin_dir_url(__FILE__);
 
         // Load text domain for translations
-        add_action('plugins_loaded', [$this, 'loadPluginTextdomain']);
+        add_action('init', [$this, 'loadPluginTextdomain']);
 
         // Initialize components
         $this->menuSettings = new AdminMenuSettings();

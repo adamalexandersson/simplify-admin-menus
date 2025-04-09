@@ -112,12 +112,12 @@ class AdminMenuSettings
         }
 
         // First check for user-specific settings
-        $settings = get_user_meta($currentUser->ID, 'sa_menu_settings', true);
+        $settings = get_user_meta($currentUser->ID, 'simpad_menu_settings', true);
         
         // If no user settings, fall back to role settings
         if (empty($settings)) {
             $role = $currentUser->roles[0];
-            $settings = get_option('sa_menu_settings_' . $role, []);
+            $settings = get_option('simpad_menu_settings_' . $role, []);
         }
 
         if (empty($settings)) {
