@@ -140,3 +140,6 @@ Created by Adam Alexandersson
 - Added support for user specific settings 
 - Improved security and code quality for WordPress plugin repository
 - Renamed plugin to Simplify Admin Menus
+
+### 1.3.1
+- General improvements

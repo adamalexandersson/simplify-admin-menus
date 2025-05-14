@@ -3,7 +3,7 @@ Contributors: adamalexandersson
 Tags: admin, adminbar, simplify, clean, hide
 Requires at least: 5.0
 Tested up to: 6.7
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -12,7 +12,7 @@ Simplify your WordPress admin interface by customizing menu items and admin bar 
 
 == Description ==
 
-Simplify Admi Menus allows you to customize and streamline your WordPress admin interface by controlling which menu items and admin bar elements are visible to different user roles. This helps create a cleaner, more focused admin experience for your users.
+Simplify Admin Menus allows you to customize and streamline your WordPress admin interface by controlling which menu items and admin bar elements are visible to different user roles. This helps create a cleaner, more focused admin experience for your users.
 
 Key Features:
 
@@ -69,6 +69,9 @@ No, this plugin only modifies the admin interface and admin bar. It does not aff
 3. Admin bar customization options
 
 == Changelog ==
+
+= 1.3.1 =
+* General improvements 
 
 = 1.3.0 =
 * Added support for user specific settings 
