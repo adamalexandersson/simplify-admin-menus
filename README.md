@@ -143,3 +143,6 @@ Created by Adam Alexandersson
 
 ### 1.3.1
 - General improvements
+
+### 1.3.2
+- Tested with Wordpress 6.9
