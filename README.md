@@ -9,6 +9,8 @@ Simplify Admin Menus is a powerful WordPress plugin designed to help administrat
 ## Features
 
 - Selectively hide/show admin menu items for specific user roles
+- Per-user Inherit / Hide / Show overrides that can bypass role settings
+- Protected administrators who always retain full menu access
 - Control visibility of admin bar items
 - User-friendly interface for managing menu visibility settings
 - Role-based access control
@@ -49,6 +51,20 @@ The build process will:
 - Generate a manifest file for asset versioning
 - Output optimized files to the `dist` directory
 
+### Creating Distribution Package
+
+To prepare the plugin for distribution, first ensure you've built all assets using `npm run build`. Then use the WP-CLI command to create a distribution package:
+
+```bash
+wp dist-archive . ./releases/simplify-admin-menus.zip --create-target-dir --format=zip
+```
+
+This will:
+- Create a `releases` directory if it doesn't exist
+- Package all plugin files into a ZIP archive
+- Exclude development files and directories (like `node_modules`, `.git`, etc.)
+- Create a clean distribution-ready plugin ZIP file
+
 ### Build Output Structure
 
 After building, the following files will be generated in the `dist` directory:
@@ -59,10 +75,11 @@ After building, the following files will be generated in the `dist` directory:
 ## Usage
 
 1. Navigate to Settings > Simplify Admin Menus in your WordPress admin panel
-2. Select the user role you want to configure from the dropdown menu
-3. Check/uncheck the menu items you want to hide/show for that role
-4. Save your changes
-5. Repeat for other user roles as needed
+2. Optionally configure Protected administrators (first admin is protected by default)
+3. Select a user role and check menu items to hide for that role
+4. Or select a specific user and set Inherit / Hide / Show per item (Show bypasses role hiding)
+5. Save your changes
+6. Repeat for other roles or users as needed
 
 ## Translations
 

@@ -279,7 +279,6 @@
     }
 }
 
-// Content Header Styles
 .simpad-content-header {
     margin-bottom: v.$spacing-2xl;
     padding-bottom: v.$spacing-base;
@@ -304,6 +303,187 @@
         font-size: v.$font-size-sm;
         margin: v.$spacing-sm 0 0;
         line-height: 1.5;
+    }
+}
+
+.simpad-protected-box {
+    @include m.card;
+    max-width: v.$max-container-width;
+    margin-top: v.$spacing-base;
+    margin-bottom: v.$spacing-2xl;
+    padding: v.$spacing-xl;
+    box-sizing: border-box;
+
+    h2 {
+        margin: 0 0 v.$spacing-sm;
+        font-size: v.$font-size-lg;
+    }
+
+    .description {
+        margin: 0 0 v.$spacing-lg;
+        color: v.$color-text-tertiary;
+    }
+}
+
+.simpad-protected-list {
+    list-style: none;
+    margin: 0 0 v.$spacing-lg;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    @include m.flex($direction: column, $gap: v.$spacing-sm);
+
+    label {
+        @include m.flex($gap: v.$spacing-sm);
+        align-items: center;
+        cursor: pointer;
+    }
+
+    small {
+        color: v.$color-text-tertiary;
+    }
+}
+
+.simpad-protected-badge {
+    display: inline-block;
+    margin-left: v.$spacing-xs;
+    padding: 0 v.$spacing-sm;
+    border-radius: v.$border-radius-sm;
+    background: v.$color-primary-light;
+    color: v.$color-primary;
+    border: 1px solid v.$color-primary-border;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.simpad-user-status {
+    @include m.flex($gap: v.$spacing-base);
+    align-items: center;
+    margin-top: v.$spacing-md;
+    flex-wrap: wrap;
+
+    &[hidden] {
+        display: none !important;
+    }
+}
+
+.simpad-status-label {
+    font-size: v.$font-size-sm;
+    font-weight: 500;
+    color: v.$color-secondary;
+    background: v.$color-secondary-light;
+    border: 1px solid v.$color-secondary-border;
+    border-radius: v.$border-radius-sm;
+    padding: v.$spacing-xs v.$spacing-md;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.simpad-protected-notice {
+    margin-top: v.$spacing-md;
+    padding: v.$spacing-md v.$spacing-lg;
+    background: v.$color-primary-light;
+    border: 1px solid v.$color-primary-border;
+    border-radius: v.$border-radius-base;
+    color: v.$color-primary;
+    font-size: v.$font-size-sm;
+
+    &[hidden] {
+        display: none !important;
+    }
+}
+
+.simpad-user-control {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: v.$spacing-sm;
+}
+
+.simpad-item-title {
+    font-weight: 600;
+    color: v.$color-text;
+    min-width: 120px;
+}
+
+.simpad-state-toggle {
+    @include m.flex;
+    border: 1px solid v.$color-border;
+    border-radius: v.$border-radius-base;
+    overflow: hidden;
+}
+
+.simpad-state-btn {
+    appearance: none;
+    border: 0;
+    background: v.$color-white;
+    color: v.$color-text-secondary;
+    padding: v.$spacing-xs v.$spacing-md;
+    font-size: 12px;
+    line-height: 1.4;
+    cursor: pointer;
+    border-right: 1px solid v.$color-border;
+
+    &:last-child {
+        border-right: 0;
+    }
+
+    &.is-active {
+        background: v.$color-secondary;
+        color: v.$color-white;
+        font-weight: 600;
+    }
+
+    &:hover:not(.is-active) {
+        background: v.$color-secondary-light;
+        color: v.$color-secondary;
+    }
+}
+
+.simpad-role-hint {
+    font-size: 11px;
+    color: v.$color-text-tertiary;
+    font-style: italic;
+}
+
+.simpad-menu-item[hidden],
+.simpad-menu-item.simpad-inaccessible {
+    display: none !important;
+}
+
+.simpad-submenu-item {
+    > .simpad-role-control,
+    > .simpad-user-control {
+        font-weight: 400;
+    }
+
+    > .simpad-user-control .simpad-item-title {
+        font-weight: 400;
+    }
+}
+
+// Hide the inactive control set before JS runs to avoid a flash on first paint.
+.simplify-admin-menus-form:not(.is-user-mode) {
+    .simpad-user-control {
+        display: none !important;
+    }
+}
+
+.simplify-admin-menus-form.is-user-mode {
+    .simpad-role-control {
+        display: none !important;
+    }
+
+    .simpad-user-control:not([hidden]) {
+        display: flex;
+    }
+}
+
+.is-role-mode {
+    .simpad-user-status,
+    .simpad-protected-notice {
+        display: none !important;
     }
 }
 
@@ -377,6 +557,32 @@
                 border-radius: 50%;
                 background: v.$color-secondary;
                 transform: translate(-50%, -50%);
+                display: block;
+            }
+        }
+    }
+}
+
+.simpad-protected-form {
+    input[type="checkbox"] {
+        @include m.checkbox-base;
+        border-radius: v.$border-radius-sm;
+
+        &:checked {
+            background: v.$color-secondary;
+            border-color: v.$color-secondary;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 45%;
+                width: 3px;
+                height: 8px;
+                margin: 0;
+                border: solid v.$color-white;
+                border-width: 0 1.5px 1.5px 0;
+                transform: translate(-50%, -50%) rotate(45deg);
                 display: block;
             }
         }

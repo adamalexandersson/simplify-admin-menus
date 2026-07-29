@@ -1,13 +1,23 @@
 <?php
 
-namespace SimplifyAdminMenus;
+namespace SimplifyAdminMenus\AdminBar;
+
+use SimplifyAdminMenus\Settings\Resolver;
+use WP_Admin_Bar;
+use WP_User;
 
 use function add_action;
-use function get_option;
+use function class_exists;
+use function do_action_ref_array;
+use function function_exists;
+use function get_current_user_id;
+use function is_array;
+use function is_object;
+use function is_string;
 use function wp_get_current_user;
+use function wp_set_current_user;
 use function wp_strip_all_tags;
 use function __;
-use function get_user_meta;
 
 /**
  * Admin Bar Settings Class
@@ -19,21 +29,25 @@ if (!defined('ABSPATH')) {
 
 class AdminBarSettings
 {
-    private array $originalAdminBar;
+    private array $originalAdminBar = [];
 
     /**
      * Map of node IDs to custom titles
      */
     private array $titleMap = [];
 
-    public function __construct()
+    private Resolver $resolver;
+
+    public function __construct(Resolver $resolver)
     {
+        $this->resolver = $resolver;
+
         add_action('init', [$this, 'setTitleMap']);
         add_action('wp_before_admin_bar_render', [$this, 'storeOriginalAdminBar'], 9999);
         add_action('wp_before_admin_bar_render', [$this, 'hideAdminBarItems'], 99999);
     }
-    
-    public function setTitleMap()
+
+    public function setTitleMap(): void
     {
         $this->titleMap = [
             'updates' => __('Updates', 'simplify-admin-menus'),
@@ -95,7 +109,7 @@ class AdminBarSettings
     public function storeOriginalAdminBar(): void
     {
         global $wp_admin_bar;
-        
+
         if (!is_object($wp_admin_bar)) {
             return;
         }
@@ -104,7 +118,7 @@ class AdminBarSettings
 
         if ($nodes) {
             // Sort nodes to ensure parent nodes are processed first
-            uasort($nodes, function($a, $b) {
+            uasort($nodes, function ($a, $b) {
                 $aDepth = 0;
                 $bDepth = 0;
 
@@ -132,6 +146,78 @@ class AdminBarSettings
     public function getAdminBarItems(): array
     {
         return $this->originalAdminBar;
+    }
+
+    /**
+     * Admin bar node IDs visible to a role or user.
+     * Returns null when probing is not possible (UI should show all items).
+     *
+     * @return string[]|null
+     */
+    public function getAccessibleNodeIds(?string $role = null, $user = null): ?array
+    {
+        $probeUserId = 0;
+
+        if ($user instanceof WP_User && $user->ID) {
+            $probeUserId = (int) $user->ID;
+        } elseif (is_string($role) && $role !== '') {
+            $probeUserId = $this->resolver->getProbeUserIdForRole($role);
+        }
+
+        if ($probeUserId <= 0) {
+            return null;
+        }
+
+        $ids = $this->collectNodeIdsForUser($probeUserId);
+
+        // Probe failed — don't hide the entire list.
+        if ($ids === []) {
+            return null;
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Build a fresh admin bar as the probe user and collect node IDs.
+     *
+     * @return string[]
+     */
+    private function collectNodeIdsForUser(int $userId): array
+    {
+        if (!class_exists(WP_Admin_Bar::class)) {
+            require_once ABSPATH . 'wp-includes/class-wp-admin-bar.php';
+        }
+
+        if (!function_exists('wp_admin_bar_my_account_menu')) {
+            require_once ABSPATH . 'wp-includes/admin-bar.php';
+        }
+
+        $previousUserId = get_current_user_id();
+        wp_set_current_user($userId);
+
+        $adminBar = new WP_Admin_Bar();
+        $adminBar->initialize();
+        // Registers core admin_bar_menu callbacks (not run during AJAX by default).
+        $adminBar->add_menus();
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Invoking WordPress core hook to rebuild the admin bar for capability probing.
+        do_action_ref_array('admin_bar_menu', [&$adminBar]);
+
+        $nodes = $adminBar->get_nodes();
+        $ids = [];
+
+        if (is_array($nodes)) {
+            foreach ($nodes as $nodeId => $node) {
+                if ($nodeId === 'menu-toggle') {
+                    continue;
+                }
+                $ids[] = (string) $nodeId;
+            }
+        }
+
+        wp_set_current_user($previousUserId);
+
+        return $ids;
     }
 
     /**
@@ -172,7 +258,7 @@ class AdminBarSettings
 
         // Find the node in our structure
         $node = $this->findNodeInStructure($nodeId);
-        
+
         // Process children if found
         if ($node && !empty($node['children'])) {
             foreach ($node['children'] as $childId => $child) {
@@ -184,7 +270,7 @@ class AdminBarSettings
     public function hideAdminBarItems(): void
     {
         global $wp_admin_bar;
-        
+
         if (!is_object($wp_admin_bar)) {
             return;
         }
@@ -194,14 +280,7 @@ class AdminBarSettings
             return;
         }
 
-        // First check for user-specific settings
-        $settings = get_user_meta($currentUser->ID, 'simpad_adminbar_settings', true);
-        
-        // If no user settings, fall back to role settings
-        if (empty($settings)) {
-            $role = reset($currentUser->roles);
-            $settings = get_option('simpad_adminbar_settings_' . $role, []);
-        }
+        $settings = $this->resolver->getEffectiveHideMap($currentUser, Resolver::TYPE_ADMINBAR);
 
         if (empty($settings)) {
             return;
@@ -212,4 +291,4 @@ class AdminBarSettings
             $this->hideNodeAndChildren($wp_admin_bar, $nodeId, $settings);
         }
     }
-} 
+}

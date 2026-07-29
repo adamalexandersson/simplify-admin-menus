@@ -2,22 +2,24 @@
 Contributors: adamalexandersson
 Tags: admin, adminbar, simplify, clean, hide
 Requires at least: 5.0
-Tested up to: 6.9
+Tested up to: 7.0
 Stable tag: 1.3.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Simplify your WordPress admin interface by customizing menu items and admin bar elements per user role.
+Simplify your WordPress admin interface by customizing menu items and admin bar elements per user role or individual user.
 
 == Description ==
 
-Simplify Admin Menus allows you to customize and streamline your WordPress admin interface by controlling which menu items and admin bar elements are visible to different user roles. This helps create a cleaner, more focused admin experience for your users.
+Simplify Admin Menus allows you to customize and streamline your WordPress admin interface by controlling which menu items and admin bar elements are visible to different user roles and individual users. This helps create a cleaner, more focused admin experience.
 
 Key Features:
 
 * Role-based menu item visibility control
-* Customizable admin bar elements per role
+* Per-user overrides (Inherit, Hide, or Show) that can bypass role settings
+* Protected administrators who always retain full menu access
+* Customizable admin bar elements per role or user
 * Simple and intuitive interface
 * Improves admin workflow efficiency
 
@@ -27,6 +29,7 @@ Key Features:
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Use the Settings->Simplify Admin Menus screen to configure the plugin
 4. Configure visibility settings for each user role as needed
+5. Optionally set per-user overrides or protected administrators
 
 = Development =
 
@@ -57,6 +60,20 @@ The plugin uses:
 = Can I control menu items for specific user roles? =
 
 Yes, you can customize which menu items are visible for each user role independently.
+
+= Can I unhide a menu item for one user when it is hidden for their role? =
+
+Yes. Select the user and set that item to Show. User Show overrides role hiding. Inherit follows the role; Hide forces the item hidden.
+
+Important: Show only unhides items WordPress already allows for that user. It cannot grant capabilities. For example, Appearance, Plugins, and Users normally require Administrator capabilities, so showing them for an Editor will have no effect.
+
+= What are protected administrators? =
+
+Protected administrators always see the full admin menu and admin bar, even if the Administrator role has items hidden. Only users in that list are exempt — network/super admin status alone does not bypass restrictions. The first administrator is protected by default. You can manage the list under Protected administrators on the settings page.
+
+= Does this plugin block access to admin pages by URL? =
+
+No. This plugin only hides menu and admin bar items in the interface. It does not change capabilities or block direct URL access.
 
 = Will this affect the front-end of my site? =
 

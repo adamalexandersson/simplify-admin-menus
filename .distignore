@@ -1,0 +1,30 @@
+# Composer / dev filer
+/vendor/bin/
+/vendor/**/bin/
+/vendor/**/doc/
+/vendor/**/docs/
+/vendor/**/test/
+/vendor/**/tests/
+/vendor/**/Tests/
+/vendor/**/example/
+/vendor/**/examples/
+
+# Node / build
+.npmignore
+node_modules/
+*.map
+
+# Git & build relaterat
+.distignore
+.git
+.gitignore
+releases
+package.json
+package-lock.json
+components.json
+tsconfig.json
+vite.config.js
+
+# OS / editor filer
+.DS_Store
+Thumbs.db
