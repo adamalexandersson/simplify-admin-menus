@@ -3,6 +3,7 @@ node_modules/
 dist/
 /vendor
 /public
+releases
 .env
 npm-debug.log
 yarn-error.log

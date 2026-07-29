@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Simplify Admin Menus
- * Plugin URI: 
+ * Plugin URI:
  * Description: WordPress plugin that simplifies the admin panel menus and admin bar for user roles or specific users.
  * Version: 1.3.2
  * Author: Adam Alexandersson
- * Author URI: 
+ * Author URI:
  * License: GPL v3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: simplify-admin-menus
@@ -13,6 +13,12 @@
  */
 
 namespace SimplifyAdminMenus;
+
+use SimplifyAdminMenus\Admin\SettingsPage;
+use SimplifyAdminMenus\AdminBar\AdminBarSettings;
+use SimplifyAdminMenus\Menu\MenuSettings;
+use SimplifyAdminMenus\Settings\Migrator;
+use SimplifyAdminMenus\Settings\Resolver;
 
 use function add_action;
 use function load_plugin_textdomain;
@@ -32,50 +38,62 @@ if (!function_exists('add_action')) {
 }
 
 // Load Composer's autoloader
-$autoloader = __DIR__ . '/vendor/autoload.php';
-if (file_exists($autoloader)) {
-    require_once $autoloader;
+$simpad_autoloader = __DIR__ . '/vendor/autoload.php';
+if (file_exists($simpad_autoloader)) {
+    require_once $simpad_autoloader;
 } else {
     wp_die('Please run composer install to install the necessary dependencies.');
 }
 
-class SimplifyAdminMenus {
+class SimplifyAdminMenus
+{
     private static ?SimplifyAdminMenus $instance = null;
     private string $pluginPath;
     private string $pluginUrl;
-    private AdminMenuSettings $menuSettings;
+    private Resolver $resolver;
+    private Migrator $migrator;
+    private MenuSettings $menuSettings;
     private AdminBarSettings $adminBarSettings;
-    private AdminSettings $adminSettings;
+    private SettingsPage $adminSettings;
 
-    public static function getInstance(): SimplifyAdminMenus {
+    public static function getInstance(): SimplifyAdminMenus
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->pluginPath = plugin_dir_path(__FILE__);
         $this->pluginUrl = plugin_dir_url(__FILE__);
 
         // Load text domain for translations
         add_action('init', [$this, 'loadPluginTextdomain']);
 
+        $this->resolver = new Resolver();
+        $this->migrator = new Migrator($this->resolver);
+
+        add_action('admin_init', [$this->migrator, 'maybeUpgrade']);
+
         // Initialize components
-        $this->menuSettings = new AdminMenuSettings();
-        $this->adminBarSettings = new AdminBarSettings();
-        $this->adminSettings = new AdminSettings(
+        $this->menuSettings = new MenuSettings($this->resolver);
+        $this->adminBarSettings = new AdminBarSettings($this->resolver);
+        $this->adminSettings = new SettingsPage(
             $this->pluginPath,
             $this->pluginUrl,
             $this->menuSettings,
-            $this->adminBarSettings
+            $this->adminBarSettings,
+            $this->resolver
         );
     }
 
     /**
      * Load plugin translations
      */
-    public function loadPluginTextdomain(): void {
+    public function loadPluginTextdomain(): void
+    {
         load_plugin_textdomain(
             'simplify-admin-menus',
             false,
@@ -85,4 +103,4 @@ class SimplifyAdminMenus {
 }
 
 // Initialize the plugin
-SimplifyAdminMenus::getInstance(); 
+SimplifyAdminMenus::getInstance();

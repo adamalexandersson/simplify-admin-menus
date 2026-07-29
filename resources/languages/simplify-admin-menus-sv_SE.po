@@ -3,20 +3,22 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Simplify Admin 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simplify-admin\n"
-"POT-Creation-Date: 2025-04-09T08:34:12+00:00\n"
-"PO-Revision-Date: 2025-04-09 10:43+0200\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simplify-admin-"
+"menus\n"
+"POT-Creation-Date: 2026-07-29T11:53:56+00:00\n"
+"PO-Revision-Date: 2026-07-29 13:54+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.9\n"
 "X-Domain: simplify-admin-menus\n"
 
 #. Plugin Name of the plugin
-#: simplify-admin-menus.php app/AdminSettings.php:80 app/AdminSettings.php:81
+#: simplify-admin-menus.php app/Admin/SettingsPage.php:91
+#: app/Admin/SettingsPage.php:92
 msgid "Simplify Admin Menus"
 msgstr "Förenkla admin menyer"
 
@@ -34,72 +36,162 @@ msgstr ""
 msgid "Adam Alexandersson"
 msgstr "Adam Alexandersson"
 
-#: app/AdminBarSettings.php:39
-msgid "Updates"
-msgstr "Uppdateringar"
-
-#: app/AdminBarSettings.php:40
-msgid "Comments"
-msgstr "Kommentarer"
-
-#: app/AdminBarSettings.php:41
-msgid "My account"
-msgstr "Mitt konto"
-
-#: app/AdminBarSettings.php:42
-msgid "Litespeed Menu"
-msgstr "Litespeed Meny"
-
-#: app/AdminSettings.php:112
+#: app/Admin/SettingsPage.php:124
 msgid "Editing:"
 msgstr "Redigering:"
 
-#: app/AdminSettings.php:433
+#: app/Admin/SettingsPage.php:125
+msgid "Using role defaults"
+msgstr "Använder rollens standard"
+
+#. translators: %d: number of custom overrides
+#: app/Admin/SettingsPage.php:127
+#, php-format
+msgid "Custom overrides (%d)"
+msgstr "Anpassade undantag (%d)"
+
+#: app/Admin/SettingsPage.php:128 resources/views/settings-page.php:159
+msgid "Reset to role defaults"
+msgstr "Återställ till rollens standard"
+
+#: app/Admin/SettingsPage.php:129 resources/views/settings-page.php:163
+msgid "This user is a protected administrator. Menu restrictions do not apply."
+msgstr ""
+"Denna användare är en skyddad administratör. Menybegränsningar gäller inte."
+
+#: app/Admin/SettingsPage.php:130 resources/views/settings-page.php:186
+#: resources/views/settings-page.php:207 resources/views/settings-page.php:237
+msgid "Inherit"
+msgstr "Ärv"
+
+#: app/Admin/SettingsPage.php:131 resources/views/settings-page.php:187
+#: resources/views/settings-page.php:208 resources/views/settings-page.php:238
+msgid "Hide"
+msgstr "Dölj"
+
+#: app/Admin/SettingsPage.php:132 resources/views/settings-page.php:188
+#: resources/views/settings-page.php:209 resources/views/settings-page.php:239
+msgid "Show"
+msgstr "Visa"
+
+#: app/Admin/SettingsPage.php:133 resources/views/settings-page.php:191
+#: resources/views/settings-page.php:212 resources/views/settings-page.php:242
+msgid "Hidden by role"
+msgstr "Dold av roll"
+
+#: app/Admin/SettingsPage.php:134 resources/views/settings-page.php:151
+msgid "Choose which items to hide"
+msgstr "Välj vilka alternativ som ska döljas"
+
+#: app/Admin/SettingsPage.php:135 resources/views/settings-page.php:149
+msgid ""
+"Set Inherit, Hide, or Show per item. Show bypasses role hiding, but cannot "
+"grant WordPress capabilities the user does not have."
+msgstr ""
+"Ställ in Ärv, Dölj eller Visa per objekt. Visa kringgår rolldöljning, men "
+"kan inte ge WordPress-rättigheter som användaren inte har."
+
+#: app/Admin/SettingsPage.php:215 app/Admin/SettingsPage.php:276
+#: app/Admin/SettingsPage.php:331
+msgid "Insufficient permissions"
+msgstr "Otillräckliga behörigheter"
+
+#: app/Admin/SettingsPage.php:222 app/Admin/SettingsPage.php:288
+msgid "Role or User ID is required"
+msgstr "Roll eller användar-ID krävs"
+
+#: app/Admin/SettingsPage.php:231
+msgid "User not found"
+msgstr "Användaren hittades inte"
+
+#: app/Admin/SettingsPage.php:281 app/Admin/SettingsPage.php:336
+msgid "Invalid nonce"
+msgstr "Ogiltig nonce"
+
+#: app/Admin/SettingsPage.php:515
 msgid "Settings saved successfully!"
 msgstr "Inställningarna har sparats!"
 
-#: resources/views/settings-page.php:40
+#: app/AdminBar/AdminBarSettings.php:53
+msgid "Updates"
+msgstr "Uppdateringar"
+
+#: app/AdminBar/AdminBarSettings.php:54
+msgid "Comments"
+msgstr "Kommentarer"
+
+#: app/AdminBar/AdminBarSettings.php:55
+msgid "My account"
+msgstr "Mitt konto"
+
+#: app/AdminBar/AdminBarSettings.php:56
+msgid "Litespeed Menu"
+msgstr "Litespeed Meny"
+
+#: resources/views/settings-page.php:22
+msgid "Protected administrators"
+msgstr "Skyddade administratörer"
+
+#: resources/views/settings-page.php:24
+msgid ""
+"Protected administrators always see the full admin menu and admin bar, even "
+"when the Administrator role has items hidden. Only users checked here are "
+"exempt — including network/super admins. The first administrator is "
+"protected by default."
+msgstr ""
+"Skyddade administratörer ser alltid hela adminmenyn och adminfältet, även "
+"när Administratörsrollen har objekt dolda. Endast ikryssade användare är "
+"undantagna — även nätverks-/superadministratörer. Den första administratören "
+"är skyddad som standard."
+
+#: resources/views/settings-page.php:44
+msgid "Save protected administrators"
+msgstr "Spara skyddade administratörer"
+
+#: resources/views/settings-page.php:54
 msgid "User Roles"
 msgstr "Användarroller"
 
-#: resources/views/settings-page.php:52
+#: resources/views/settings-page.php:66
 msgid "Users"
 msgstr "Användare"
 
-#: resources/views/settings-page.php:54
+#: resources/views/settings-page.php:68
 msgid "Search users..."
 msgstr "Sök användare…"
 
-#: resources/views/settings-page.php:93 resources/views/settings-page.php:107
+#: resources/views/settings-page.php:86
+msgid "Protected"
+msgstr "Skyddad"
+
+#: resources/views/settings-page.php:113 resources/views/settings-page.php:127
 msgid "Menu Items"
 msgstr "Sidomeny"
 
-#: resources/views/settings-page.php:98 resources/views/settings-page.php:109
+#: resources/views/settings-page.php:118 resources/views/settings-page.php:129
 msgid "Admin Bar"
 msgstr "Adminfält"
 
 #. translators: %s: User display name
-#: resources/views/settings-page.php:117
+#: resources/views/settings-page.php:137
+#, php-format
 msgid "Editing user: %s"
 msgstr "Redigerar användare: %s"
 
 #. translators: %s: User role name
-#: resources/views/settings-page.php:120
+#: resources/views/settings-page.php:140
+#, php-format
 msgid "Editing role: %s"
 msgstr "Redigerar roll: %s"
 
-#: resources/views/settings-page.php:126
-msgid "Choose which items to hide"
-msgstr "Välj vilka alternativ som ska döljas"
-
-#: resources/views/settings-page.php:132
+#: resources/views/settings-page.php:170
 msgid "Loading settings..."
 msgstr "Laddar inställningar…"
 
-#: resources/views/settings-page.php:188
+#: resources/views/settings-page.php:256
 msgid "No admin bar items found."
 msgstr "Inget adminrad objekt hittades."
 
-#: resources/views/settings-page.php:201
+#: resources/views/settings-page.php:269
 msgid "Save Settings"
 msgstr "Spara inställningar"
