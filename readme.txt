@@ -3,7 +3,7 @@ Contributors: adamalexandersson
 Tags: admin, adminbar, simplify, clean, hide
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 1.3.2
+Stable tag: 2.0.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -86,6 +86,16 @@ No, this plugin only modifies the admin interface and admin bar. It does not aff
 3. Admin bar customization options
 
 == Changelog ==
+
+= 2.0.0 =
+* Added protected administrators who always retain full menu and admin bar access
+* Added per-user Inherit / Hide / Show overrides that can bypass role settings
+* Migrated legacy user hide maps to the new override format automatically
+* Protected access is controlled only by the protected administrators list (not network/super admin status alone)
+* Improved menu removal using WordPress core menu APIs
+* Restructured plugin code into clearer namespaced app folders
+* Hardened settings save/load sanitization and redirects
+* Tested with Wordpress 7.0
 
 = 1.3.2 =
 * Tested with Wordpress 6.9

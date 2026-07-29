@@ -163,3 +163,13 @@ Created by Adam Alexandersson
 
 ### 1.3.2
 - Tested with Wordpress 6.9
+
+### 2.0.0
+- Added protected administrators who always retain full menu and admin bar access
+- Added per-user Inherit / Hide / Show overrides that can bypass role settings
+- Migrated legacy user hide maps to the new override format automatically
+- Protected access is controlled only by the protected administrators list (not network/super admin status alone)
+- Improved menu removal using WordPress core menu APIs
+- Restructured plugin code into clearer namespaced app folders
+- Hardened settings save/load sanitization and redirects
+- Tested with Wordpress 7.0
