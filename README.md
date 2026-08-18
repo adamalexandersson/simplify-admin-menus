@@ -173,3 +173,7 @@ Created by Adam Alexandersson
 - Restructured plugin code into clearer namespaced app folders
 - Hardened settings save/load sanitization and redirects
 - Tested with Wordpress 7.0
+
+### 2.0.1
+- Added command palette available as a hideable admin bar item.
+- Tested with Wordpress 7.1

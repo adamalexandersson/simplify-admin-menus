@@ -3,7 +3,7 @@
  * Plugin Name: Simplify Admin Menus
  * Plugin URI:
  * Description: WordPress plugin that simplifies the admin panel menus and admin bar for user roles or specific users.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Adam Alexandersson
  * Author URI:
  * License: GPL v3 or later
