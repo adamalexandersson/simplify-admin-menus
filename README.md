@@ -111,7 +111,7 @@ wp i18n make-pot . resources/languages/simplify-admin-menus.pot
 ## Requirements
 
 - WordPress 5.0 or higher
-- PHP 7.2 or higher
+- PHP 7.4 or higher
 - Node.js 16.0 or higher (for development)
 - npm 8.0 or higher (for development)
 
