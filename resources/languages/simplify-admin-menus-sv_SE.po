@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Simplify Admin 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simplify-admin-"
 "menus\n"
-"POT-Creation-Date: 2026-07-29T11:53:56+00:00\n"
-"PO-Revision-Date: 2026-07-29 13:54+0200\n"
+"POT-Creation-Date: 2026-08-18T11:01:17+00:00\n"
+"PO-Revision-Date: 2026-08-18 13:02+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -112,19 +112,23 @@ msgstr "Ogiltig nonce"
 msgid "Settings saved successfully!"
 msgstr "Inställningarna har sparats!"
 
-#: app/AdminBar/AdminBarSettings.php:53
+#: app/AdminBar/AdminBarSettings.php:55
 msgid "Updates"
 msgstr "Uppdateringar"
 
-#: app/AdminBar/AdminBarSettings.php:54
+#: app/AdminBar/AdminBarSettings.php:56
 msgid "Comments"
 msgstr "Kommentarer"
 
-#: app/AdminBar/AdminBarSettings.php:55
+#: app/AdminBar/AdminBarSettings.php:57
 msgid "My account"
 msgstr "Mitt konto"
 
-#: app/AdminBar/AdminBarSettings.php:56
+#: app/AdminBar/AdminBarSettings.php:58
+msgid "Command Palette"
+msgstr "Kommandopalett"
+
+#: app/AdminBar/AdminBarSettings.php:59
 msgid "Litespeed Menu"
 msgstr "Litespeed Meny"
 

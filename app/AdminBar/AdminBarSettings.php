@@ -14,7 +14,9 @@ use function get_current_user_id;
 use function is_array;
 use function is_object;
 use function is_string;
+use function wp_enqueue_script;
 use function wp_get_current_user;
+use function wp_scripts;
 use function wp_set_current_user;
 use function wp_strip_all_tags;
 use function __;
@@ -53,6 +55,7 @@ class AdminBarSettings
             'updates' => __('Updates', 'simplify-admin-menus'),
             'comments' => __('Comments', 'simplify-admin-menus'),
             'my-account' => __('My account', 'simplify-admin-menus'),
+            'command-palette' => __('Command Palette', 'simplify-admin-menus'),
             'litespeed-menu' => __('Litespeed Menu', 'simplify-admin-menus')
         ];
     }
@@ -196,28 +199,54 @@ class AdminBarSettings
         $previousUserId = get_current_user_id();
         wp_set_current_user($userId);
 
-        $adminBar = new WP_Admin_Bar();
-        $adminBar->initialize();
-        // Registers core admin_bar_menu callbacks (not run during AJAX by default).
-        $adminBar->add_menus();
-        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Invoking WordPress core hook to rebuild the admin bar for capability probing.
-        do_action_ref_array('admin_bar_menu', [&$adminBar]);
+        try {
+            return $this->withCommandPaletteScriptQueued(function (): array {
+                $adminBar = new WP_Admin_Bar();
+                $adminBar->initialize();
+                // Registers core admin_bar_menu callbacks (not run during AJAX by default).
+                $adminBar->add_menus();
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Invoking WordPress core hook to rebuild the admin bar for capability probing.
+                do_action_ref_array('admin_bar_menu', [&$adminBar]);
 
-        $nodes = $adminBar->get_nodes();
-        $ids = [];
+                $nodes = $adminBar->get_nodes();
+                $ids = [];
 
-        if (is_array($nodes)) {
-            foreach ($nodes as $nodeId => $node) {
-                if ($nodeId === 'menu-toggle') {
-                    continue;
+                if (is_array($nodes)) {
+                    foreach ($nodes as $nodeId => $node) {
+                        if ($nodeId === 'menu-toggle') {
+                            continue;
+                        }
+                        $ids[] = (string) $nodeId;
+                    }
                 }
-                $ids[] = (string) $nodeId;
-            }
+
+                return $ids;
+            });
+        } finally {
+            wp_set_current_user($previousUserId);
         }
+    }
 
-        wp_set_current_user($previousUserId);
+    /**
+     * Core only adds the command palette node when wp-core-commands is enqueued.
+     * AJAX probes never load that script, so enqueue it for the rebuild and
+     * restore the previous script queue afterwards.
+     *
+     * @param callable(): array $callback
+     * @return string[]
+     */
+    private function withCommandPaletteScriptQueued(callable $callback): array
+    {
+        $scripts = wp_scripts();
+        $queueBefore = $scripts->queue;
 
-        return $ids;
+        wp_enqueue_script('wp-core-commands');
+
+        try {
+            return $callback();
+        } finally {
+            $scripts->queue = $queueBefore;
+        }
     }
 
     /**
